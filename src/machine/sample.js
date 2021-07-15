@@ -22,10 +22,14 @@ const options = {
     }),
     draining: assign({
       water_level: (ctx, evt) => 1,
+      laundry_soap: (ctx, evt) => "",
     }),
     drying: assign({
       water_level: (ctx, evt) => 0,
     }),
+    unloading: assign({
+      laundry: (ctx, evt) => 0,
+    })
   },
   guards: {
     laundryAndLaundrySoapNotEmpty: (ctx, evt) => {
@@ -38,11 +42,14 @@ const options = {
       return ctx.water_level === 0;
     },
     waterNotEmpty: (ctx, evt) => {
-      return ctx.water_level !== 0;
+      return ctx.water_level > 1;
     },
     doneDraining: (ctx, evt) => {
       return ctx.water_level === 1;
     },
+    checkLaundryOnly: (ctx, evt) => {
+      return ctx.water_level === 0 && ctx.laundry_soap === "" && ctx.timer === 0 && ctx.laundry !== 0;
+    }
   },
 };
 
@@ -81,6 +88,7 @@ const fetchMachine = Machine(
           },
           UNLOAD: {
             target: "unloading",
+            cond: "checkLaundryOnly",
           },
         },
       },
@@ -98,9 +106,7 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 5000,
             target: "idle",
             actions: ["setTImeToZero"],
           },
@@ -112,9 +118,7 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 4000,
             target: "idle",
             actions: ["draining", "setTimeToZero"],
           },
@@ -126,9 +130,7 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 3000,
             target: "idle",
             actions: ["drying", "setTimeToZero"],
           },
@@ -136,7 +138,10 @@ const fetchMachine = Machine(
       },
       unloading: {
         on: {
-          DONE: "idle",
+          DONE: {
+            target: "idle",
+            actions: ["unloading"]
+          }
         },
       },
     },

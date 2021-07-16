@@ -3,6 +3,15 @@ const options = {
     waterOnly: assign({
       water_level: (ctx, evt) => 8,
     }),
+    waterAndLaundry: assign({
+      water_level: (ctx, evt) => 8,
+      laundry: (ctx, evt) => 10,
+    }),
+    waterAndLaundrySoap: assign({
+      water_level: (ctx, evt) => 8,
+      laundry_soap: (ctx, evt) => 
+"Calla",
+    }),
     waterLaundryAndLaundrySoap: assign({
       water_level: (ctx, evt) => 8,
       laundry: (ctx, evt) => 10,
@@ -32,20 +41,26 @@ const options = {
     })
   },
   guards: {
-    laundryAndLaundrySoapNotEmpty: (ctx, evt) => {
-      return ctx.laundry !== 0 && ctx.laundry_soap !== "";
+    laundryNotEmptyAndWaterEmpty: (ctx, evt) => {
+      return ctx.laundry !== 0 && ctx.water_level <= 1;
     },
     laundryAndLaundrySoapEmpty: (ctx, evt) => {
       return ctx.laundry === 0 && ctx.laundry_soap === "";
     },
+    laundryNotEmpty: (ctx, evt) => {
+      return ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === "";
+    },
     waterEmpty: (ctx, evt) => {
       return ctx.water_level === 0;
+    },
+    waterAndLaundryEmpty: (ctx, evt) => {
+      return ctx.water_level === 0 && ctx.laundry === 0;
     },
     waterNotEmpty: (ctx, evt) => {
       return ctx.water_level > 1;
     },
     doneDraining: (ctx, evt) => {
-      return ctx.water_level === 1;
+      return ctx.water_level === 1 && ctx.laundry !== 0;
     },
     checkLaundryOnly: (ctx, evt) => {
       return ctx.water_level === 0 && ctx.laundry_soap === "" && ctx.timer === 0 && ctx.laundry !== 0;
@@ -69,7 +84,17 @@ const fetchMachine = Machine(
           LOAD_WATER_ONLY: {
             target: "loading",
             actions: ["waterOnly"],
-            cond: "laundryAndLaundrySoapNotEmpty",
+            cond: "laundryNotEmptyAndWaterEmpty",
+          },
+          LOAD_WATER_AND_LAUNDRY_SOAP: {
+            target: "loading",
+            actions: ["waterAndLaundrySoap"],
+            cond: "laundryNotEmpty",
+          },
+          LOAD_WATER_AND_LAUNDRY: {
+            target: "loading",
+            actions: ["waterAndLaundry"],
+            cond: "waterAndLaundryEmpty",
           },
           LOAD_WATER_LAUNDRY_AND_LAUNDRY_SOAP: {
             target: "loading",
@@ -108,7 +133,7 @@ const fetchMachine = Machine(
           {
             delay: 5000,
             target: "idle",
-            actions: ["setTImeToZero"],
+            actions: ["setTimeToZero"],
           },
         ],
       },

@@ -3,51 +3,51 @@ import { assign, EventObject } from "xstate";
 
 module.exports = {
   loadWaterOnly: assign({
-    water_level: (ctx: Context, evt: EventObject) => 8,
+    water_level: 8,
   }),
   loadWaterAndLaundry: assign({
-    water_level: (ctx: Context, evt: EventObject) => 8,
-    laundry: (ctx: Context, evt: EventObject) => 10,
+    water_level: 8,
+    laundry: 10,
   }),
   loadWaterAndSoap: assign({
-    water_level: (ctx: Context, evt: EventObject) => 8,
-    laundry_soap: (ctx: Context, evt: EventObject) => "Calla",
+    water_level: 8,
+    laundry_soap: "Calla",
   }),
   loadWaterLaundryAndSoap: assign({
-    water_level: (ctx: Context, evt: EventObject) => 8,
-    laundry: (ctx: Context, evt: EventObject) => 10,
-    laundry_soap: (ctx: Context, evt: EventObject) => "Calla",
+    water_level: 8,
+    laundry: 10,
+    laundry_soap: "Calla",
   }),
   setTimeToWash: assign({
-    timer: (ctx: Context, evt: EventObject) => 5000,
+    timer: 5000,
   }),
   setTimeToDrain: assign({
-    timer: (ctx: Context, evt: EventObject) => 4000,
+    timer: 4000,
   }),
   setTimeToDry: assign({
-    timer: (ctx: Context, evt: EventObject) => 3000,
+    timer: 3000,
   }),
   setTimeToZero: assign({
-    timer: (ctx: Context, evt: EventObject) => 0,
+    timer: 0,
   }),
   cancelWashing: assign({
-    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+    timer: (ctx: Context, _) => ctx.timer / 2,
   }),
   draining: assign({
-    water_level: (ctx: Context, evt: EventObject) => 1,
-    laundry_soap: (ctx: Context, evt: EventObject) => "",
+    water_level: 1,
+    laundry_soap: "",
   }),
   cancelDraining: assign({
-    water_level: (ctx: Context, evt: EventObject) => ctx.water_level / 2,
-    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+    water_level: (ctx: Context, _) => ctx.water_level / 2,
+    timer: (ctx: Context) => ctx.timer / 2,
   }),
   drying: assign({
-    water_level: (ctx: Context, evt: EventObject) => 0,
+    water_level: 0,
   }),
   cancelDrying: assign({
-    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+    timer: (ctx: Context, _) => ctx.timer / 2,
   }),
   unloading: assign({
-    laundry: (ctx: Context, evt: EventObject) => 0,
+    laundry: 0,
   }),
 };

@@ -1,7 +1,12 @@
 import { createMachine } from "xstate";
 import options from "./options";
+import { WashingEvent, WashingContext, WashingState } from "./types";
 
-const washingMachineDryer = createMachine(
+const washingMachineDryer = createMachine<
+  WashingContext,
+  WashingEvent,
+  WashingState
+>(
   {
     id: "washing_machine_dryer",
     initial: "idle",

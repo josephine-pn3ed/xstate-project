@@ -1,18 +1,17 @@
 const options = {
   actions: {
-    waterOnly: assign({
+    loadWaterOnly: assign({
       water_level: (ctx, evt) => 8,
     }),
-    waterAndLaundry: assign({
+    loadWaterAndLaundry: assign({
       water_level: (ctx, evt) => 8,
       laundry: (ctx, evt) => 10,
     }),
-    waterAndLaundrySoap: assign({
+    loadWaterAndSoap: assign({
       water_level: (ctx, evt) => 8,
-      laundry_soap: (ctx, evt) => 
-"Calla",
+      laundry_soap: (ctx, evt) => "Calla",
     }),
-    waterLaundryAndLaundrySoap: assign({
+    loadWaterLaundryAndSoap: assign({
       water_level: (ctx, evt) => 8,
       laundry: (ctx, evt) => 10,
       laundry_soap: (ctx, evt) => "Calla",
@@ -33,38 +32,49 @@ const options = {
       water_level: (ctx, evt) => 1,
       laundry_soap: (ctx, evt) => "",
     }),
+    cancelDraining: assign({
+      water_level: (ctx, evt) => water_level / 2,
+      timer: (ctx, evt) => timer / 2,
+    }),
     drying: assign({
       water_level: (ctx, evt) => 0,
     }),
+    cancelDrying: assign({
+      timer: (ctx, evt) => timer / 2,
+    }),
     unloading: assign({
       laundry: (ctx, evt) => 0,
-    })
+    }),
   },
   guards: {
-    laundryNotEmptyAndWaterEmpty: (ctx, evt) => {
+    laundryNotEmptyAndWaterEmpty: (ctx, _) => {
       return ctx.laundry !== 0 && ctx.water_level <= 1;
     },
-    laundryAndLaundrySoapEmpty: (ctx, evt) => {
+    laundryAndSoapEmpty: (ctx, _) => {
       return ctx.laundry === 0 && ctx.laundry_soap === "";
     },
-    laundryNotEmpty: (ctx, evt) => {
-      return ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === "";
+    laundryNotEmptyAndWaterAndSoapEmpty: (ctx, _) => {
+      return (
+        ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === ""
+      );
     },
-    waterEmpty: (ctx, evt) => {
-      return ctx.water_level === 0;
-    },
-    waterAndLaundryEmpty: (ctx, evt) => {
+    waterAndLaundryEmpty: (ctx, _) => {
       return ctx.water_level === 0 && ctx.laundry === 0;
     },
-    waterNotEmpty: (ctx, evt) => {
+    waterNotEmpty: (ctx, _) => {
       return ctx.water_level > 1;
     },
-    doneDraining: (ctx, evt) => {
+    waterEmptyAndLaundryNotEmpty: (ctx, _) => {
       return ctx.water_level === 1 && ctx.laundry !== 0;
     },
-    checkLaundryOnly: (ctx, evt) => {
-      return ctx.water_level === 0 && ctx.laundry_soap === "" && ctx.timer === 0 && ctx.laundry !== 0;
-    }
+    laundryLeftOnly: (ctx, _) => {
+      return (
+        ctx.water_level === 0 &&
+        ctx.laundry_soap === "" &&
+        ctx.timer === 0 &&
+        ctx.laundry !== 0
+      );
+    },
   },
 };
 
@@ -81,25 +91,25 @@ const fetchMachine = Machine(
     states: {
       idle: {
         on: {
-          LOAD_WATER_ONLY: {
-            target: "loading",
-            actions: ["waterOnly"],
-            cond: "laundryNotEmptyAndWaterEmpty",
-          },
-          LOAD_WATER_AND_LAUNDRY_SOAP: {
-            target: "loading",
-            actions: ["waterAndLaundrySoap"],
-            cond: "laundryNotEmpty",
-          },
           LOAD_WATER_AND_LAUNDRY: {
             target: "loading",
-            actions: ["waterAndLaundry"],
+            actions: ["loadWaterAndLaundry"],
             cond: "waterAndLaundryEmpty",
           },
-          LOAD_WATER_LAUNDRY_AND_LAUNDRY_SOAP: {
+          LOAD_WATER_LAUNDRY_AND_SOAP: {
             target: "loading",
-            actions: ["waterLaundryAndLaundrySoap"],
-            cond: "laundryAndLaundrySoapEmpty",
+            actions: ["loadWaterLaundryAndSoap"],
+            cond: "laundryAndSoapEmpty",
+          },
+          LOAD_WATER_ONLY: {
+            target: "loading",
+            actions: ["loadWaterOnly"],
+            cond: "laundryNotEmptyAndWaterEmpty",
+          },
+          LOAD_WATER_AND_SOAP: {
+            target: "loading",
+            actions: ["loadWaterAndSoap"],
+            cond: "laundryNotEmptyAndWaterAndSoapEmpty",
           },
           DRAIN: {
             target: "draining",
@@ -109,11 +119,11 @@ const fetchMachine = Machine(
           DRY: {
             target: "drying",
             actions: ["setTimeToDry"],
-            cond: "doneDraining",
+            cond: "waterEmptyAndLaundryNotEmpty",
           },
           UNLOAD: {
             target: "unloading",
-            cond: "checkLaundryOnly",
+            cond: "laundryLeftOnly",
           },
         },
       },
@@ -165,8 +175,8 @@ const fetchMachine = Machine(
         on: {
           DONE: {
             target: "idle",
-            actions: ["unloading"]
-          }
+            actions: ["unloading"],
+          },
         },
       },
     },

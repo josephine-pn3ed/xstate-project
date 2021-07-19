@@ -1,21 +1,55 @@
 const {
-  loadContext,
-  removeLaundrySoap,
-  removeWaterLevel,
-  setTimer,
-  unload,
+  loadWaterOnly,
+  loadWaterAndLaundry,
+  loadWaterAndSoap,
+  loadWaterLaundryAndSoap,
+  setTimeToWash,
+  setTimeToDrain,
+  setTimeToDry,
+  setTimeToZero,
+  cancelWashing,
+  draining,
+  cancelDraining,
+  drying,
+  cancelDrying,
+  unloading,
 } = require("./actions");
-const { emptyContext, loadedContext, withWaterLevel } = require("./guards");
+const {
+  laundryNotEmptyAndWaterEmpty,
+  laundryAndSoapEmpty,
+  laundryNotEmptyAndWaterAndSoapEmpty,
+  waterAndLaundryEmpty,
+  waterNotEmpty,
+  waterEmptyAndLaundryNotEmpty,
+  laundryLeftOnly,
+} = require("./guards");
 
 const options = {
   actions: {
-    loadContext,
-    removeLaundrySoap,
-    removeWaterLevel,
-    setTimer,
-    unload,
+    loadWaterOnly,
+    loadWaterAndLaundry,
+    loadWaterAndSoap,
+    loadWaterLaundryAndSoap,
+    setTimeToWash,
+    setTimeToDrain,
+    setTimeToDry,
+    setTimeToZero,
+    cancelWashing,
+    draining,
+    cancelDraining,
+    drying,
+    cancelDrying,
+    unloading,
   },
-  guards: { emptyContext, loadedContext, withWaterLevel }
+  guards: {
+    laundryNotEmptyAndWaterEmpty,
+    laundryAndSoapEmpty,
+    laundryNotEmptyAndWaterAndSoapEmpty,
+    waterAndLaundryEmpty,
+    waterNotEmpty,
+    waterEmptyAndLaundryNotEmpty,
+    laundryLeftOnly,
+  },
 };
 
 export default options;

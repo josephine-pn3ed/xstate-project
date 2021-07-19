@@ -1,29 +1,53 @@
-import { assign } from "xstate";
+import { Context } from "vm";
+import { assign, EventObject } from "xstate";
 
 module.exports = {
-  loadContext: assign({
-    water_level: (context, event) => 8,
-    laundry: (context, event) => 10,
-    laundry_soap: (context, event) => "Calla",
+  loadWaterOnly: assign({
+    water_level: (ctx: Context, evt: EventObject) => 8,
   }),
-  removeLaundrySoap: assign({
-    laundry_soap: (context, event) => "",
+  loadWaterAndLaundry: assign({
+    water_level: (ctx: Context, evt: EventObject) => 8,
+    laundry: (ctx: Context, evt: EventObject) => 10,
   }),
-  removeWaterLevel: assign({
-    water_level: (context, event) => 0,
+  loadWaterAndSoap: assign({
+    water_level: (ctx: Context, evt: EventObject) => 8,
+    laundry_soap: (ctx: Context, evt: EventObject) => "Calla",
   }),
-  setTImer: assign({
-    timer: (context, event) => 0,
+  loadWaterLaundryAndSoap: assign({
+    water_level: (ctx: Context, evt: EventObject) => 8,
+    laundry: (ctx: Context, evt: EventObject) => 10,
+    laundry_soap: (ctx: Context, evt: EventObject) => "Calla",
   }),
-  unload: assign({
-    laundry: (context, event) => 0,
+  setTimeToWash: assign({
+    timer: (ctx: Context, evt: EventObject) => 5000,
   }),
-  waterOnly: assign({
-    water_level: (ctx, evt) => 8
+  setTimeToDrain: assign({
+    timer: (ctx: Context, evt: EventObject) => 4000,
   }),
-  waterLaundryAndLaundrySoap: assign({
-    water_level: (ctx, evt) => 8,
-    laundry: (ctx, evt) => 10,
-    laundry_soap: (ctx, evt) => "Calla"
-  })
+  setTimeToDry: assign({
+    timer: (ctx: Context, evt: EventObject) => 3000,
+  }),
+  setTimeToZero: assign({
+    timer: (ctx: Context, evt: EventObject) => 0,
+  }),
+  cancelWashing: assign({
+    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+  }),
+  draining: assign({
+    water_level: (ctx: Context, evt: EventObject) => 1,
+    laundry_soap: (ctx: Context, evt: EventObject) => "",
+  }),
+  cancelDraining: assign({
+    water_level: (ctx: Context, evt: EventObject) => ctx.water_level / 2,
+    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+  }),
+  drying: assign({
+    water_level: (ctx: Context, evt: EventObject) => 0,
+  }),
+  cancelDrying: assign({
+    timer: (ctx: Context, evt: EventObject) => ctx.timer / 2,
+  }),
+  unloading: assign({
+    laundry: (ctx: Context, evt: EventObject) => 0,
+  }),
 };

@@ -1,23 +1,33 @@
+import { Context } from "vm";
+import { EventObject } from "xstate";
 
 module.exports = {
-  emptyContext: (context: any, event: any) => {
-    const { water_level, laundry, laundry_soap, timer } = context;
+  laundryNotEmptyAndWaterEmpty: (ctx: Context, _: EventObject) => {
+    return ctx.laundry !== 0 && ctx.water_level <= 1;
+  },
+  laundryAndSoapEmpty: (ctx: Context, _: EventObject) => {
+    return ctx.laundry === 0 && ctx.laundry_soap === "";
+  },
+  laundryNotEmptyAndWaterAndSoapEmpty: (ctx: Context, _: EventObject) => {
     return (
-      water_level === 0 && laundry === 0 && timer === 0 && laundry_soap === ""
+      ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === ""
     );
   },
-  loadedContext: (context: any, event: any) => {
-    const { water_level, laundry, laundry_soap } = context;
-    return water_level !== 0 && laundry !== 0 && laundry_soap !== "";
+  waterAndLaundryEmpty: (ctx: Context, _: EventObject) => {
+    return ctx.water_level === 0 && ctx.laundry === 0;
   },
-  withWaterLevel: (context: any, event: any) => {
-    const { water_level } = context;
-    return water_level === 0;
+  waterNotEmpty: (ctx: Context, _: EventObject) => {
+    return ctx.water_level > 1;
   },
-  laundryAndLaundrySoapNotEmpty: (ctx: any, evt: any) => {
-    return (ctx.laundry !== 0 && ctx.laundry_soap !== "");
+  waterEmptyAndLaundryNotEmpty: (ctx: Context, _: EventObject) => {
+    return ctx.water_level === 1 && ctx.laundry !== 0;
   },
-  laundryAndLaundrySoapEmpty: (ctx: any, evt: any) => {
-    return (ctx.laundry === 0 && ctx.laundry_soap === "");
-  }
+  laundryLeftOnly: (ctx: Context, _: EventObject) => {
+    return (
+      ctx.water_level === 0 &&
+      ctx.laundry_soap === "" &&
+      ctx.timer === 0 &&
+      ctx.laundry !== 0
+    );
+  },
 };

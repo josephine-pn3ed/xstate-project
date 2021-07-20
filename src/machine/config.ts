@@ -65,9 +65,12 @@ const washingMachineDryer = createMachine(
       },
       unloading: {
         on: {
-          DONE: "idle",
+          DONE: "done",
         },
       },
+      done:{
+        type:'final'
+      }
     },
   },
   options

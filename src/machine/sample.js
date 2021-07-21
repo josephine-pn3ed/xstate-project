@@ -1,9 +1,17 @@
 const options = {
   actions: {
-    waterOnly: assign({
+    loadWaterOnly: assign({
       water_level: (ctx, evt) => 8,
     }),
-    waterLaundryAndLaundrySoap: assign({
+    loadWaterAndLaundry: assign({
+      water_level: (ctx, evt) => 8,
+      laundry: (ctx, evt) => 10,
+    }),
+    loadWaterAndSoap: assign({
+      water_level: (ctx, evt) => 8,
+      laundry_soap: (ctx, evt) => "Calla",
+    }),
+    loadWaterLaundryAndSoap: assign({
       water_level: (ctx, evt) => 8,
       laundry: (ctx, evt) => 10,
       laundry_soap: (ctx, evt) => "Calla",
@@ -25,26 +33,50 @@ const options = {
     }),
     draining: assign({
       water_level: (ctx, evt) => 1,
+      laundry_soap: (ctx, evt) => "",
+    }),
+    cancelDraining: assign({
+      water_level: (ctx, evt) => water_level / 2,
+      timer: (ctx, evt) => timer / 2,
     }),
     drying: assign({
       water_level: (ctx, evt) => 0,
     }),
+    cancelDrying: assign({
+      timer: (ctx, evt) => timer / 2,
+    }),
+    unloading: assign({
+      laundry: (ctx, evt) => 0,
+    }),
   },
   guards: {
-    laundryAndLaundrySoapNotEmpty: (ctx, evt) => {
-      return ctx.laundry !== 0 && ctx.laundry_soap !== "";
+    laundryNotEmptyAndWaterEmpty: (ctx, _) => {
+      return ctx.laundry !== 0 && ctx.water_level <= 1;
     },
-    laundryAndLaundrySoapEmpty: (ctx, evt) => {
+    laundryAndSoapEmpty: (ctx, _) => {
       return ctx.laundry === 0 && ctx.laundry_soap === "";
     },
-    waterEmpty: (ctx, evt) => {
-      return ctx.water_level === 0;
+    laundryNotEmptyAndWaterAndSoapEmpty: (ctx, _) => {
+      return (
+        ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === ""
+      );
     },
-    waterNotEmpty: (ctx, evt) => {
-      return ctx.water_level !== 0;
+    waterAndLaundryEmpty: (ctx, _) => {
+      return ctx.water_level === 0 && ctx.laundry === 0;
     },
-    doneDraining: (ctx, evt) => {
-      return ctx.water_level === 1;
+    waterNotEmpty: (ctx, _) => {
+      return ctx.water_level > 1;
+    },
+    waterEmptyAndLaundryNotEmpty: (ctx, _) => {
+      return ctx.water_level === 1 && ctx.laundry !== 0;
+    },
+    laundryLeftOnly: (ctx, _) => {
+      return (
+        ctx.water_level === 0 &&
+        ctx.laundry_soap === "" &&
+        ctx.timer === 0 &&
+        ctx.laundry !== 0
+      );
     },
   },
 };
@@ -62,15 +94,25 @@ const fetchMachine = Machine(
     states: {
       idle: {
         on: {
+          LOAD_WATER_AND_LAUNDRY: {
+            target: "loading",
+            actions: ["loadWaterAndLaundry"],
+            cond: "waterAndLaundryEmpty",
+          },
+          LOAD_WATER_LAUNDRY_AND_SOAP: {
+            target: "loading",
+            actions: ["loadWaterLaundryAndSoap"],
+            cond: "laundryAndSoapEmpty",
+          },
           LOAD_WATER_ONLY: {
             target: "loading",
-            actions: ["waterOnly"],
-            cond: "laundryAndLaundrySoapNotEmpty",
+            actions: ["loadWaterOnly"],
+            cond: "laundryNotEmptyAndWaterEmpty",
           },
-          LOAD_WATER_LAUNDRY_AND_LAUNDRY_SOAP: {
+          LOAD_WATER_AND_SOAP: {
             target: "loading",
-            actions: ["waterLaundryAndLaundrySoap"],
-            cond: "laundryAndLaundrySoapEmpty",
+            actions: ["loadWaterAndSoap"],
+            cond: "laundryNotEmptyAndWaterAndSoapEmpty",
           },
           DRAIN: {
             target: "draining",
@@ -80,10 +122,11 @@ const fetchMachine = Machine(
           DRY: {
             target: "drying",
             actions: ["setTimeToDry"],
-            cond: "doneDraining",
+            cond: "waterEmptyAndLaundryNotEmpty",
           },
           UNLOAD: {
             target: "unloading",
+            cond: "laundryLeftOnly",
           },
         },
       },
@@ -104,11 +147,9 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 5000,
             target: "idle",
-            actions: ["setTImeToZero"],
+            actions: ["setTimeToZero"],
           },
         ],
       },
@@ -121,9 +162,7 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 4000,
             target: "idle",
             actions: ["draining", "setTimeToZero"],
           },
@@ -138,9 +177,7 @@ const fetchMachine = Machine(
         },
         after: [
           {
-            delay: (ctx, evt) => {
-              return ctx.time;
-            },
+            delay: 3000,
             target: "idle",
             actions: ["drying", "setTimeToZero"],
           },
@@ -148,7 +185,10 @@ const fetchMachine = Machine(
       },
       unloading: {
         on: {
-          DONE: "idle",
+          DONE: {
+            target: "idle",
+            actions: ["unloading"],
+          },
         },
       },
     },

@@ -1,7 +1,12 @@
 import { createMachine } from "xstate";
 import options from "./options";
+import { WashingEvent, WashingContext, WashingState } from "./types";
 
-const washingMachineDryer = createMachine(
+const washingMachineDryer = createMachine<
+  WashingContext,
+  WashingEvent,
+  WashingState
+>(
   {
     id: "washing_machine_dryer",
     initial: "idle",
@@ -14,58 +19,101 @@ const washingMachineDryer = createMachine(
     states: {
       idle: {
         on: {
-            LOAD_WATER_ONLY: {
-              target: "loading",
-              actions: ["waterOnly"],
-              cond: "laundryAndLaundrySoapNotEmpty",
-            },
-            LOAD_WATER_LAUNDRY_AND_LAUNDRY_SOAP: {
-              target: "loading",
-              actions: ["waterLaundryAndLaundrySoap"],
-              cond: "laundryAndLaundrySoapEmpty",
-            },
-            DRAIN: {
-              target: "draining",
-              cond: "loadedContext",
-            },
-            DRY: {
-              
-            },
-            UNLOAD: {
-              
-            }
+          LOAD_WATER_AND_LAUNDRY: {
+            target: "loading",
+            actions: ["loadWaterAndLaundry"],
+            cond: "waterAndLaundryEmpty",
+          },
+          LOAD_WATER_LAUNDRY_AND_SOAP: {
+            target: "loading",
+            actions: ["loadWaterLaundryAndSoap"],
+            cond: "laundryAndSoapEmpty",
+          },
+          LOAD_WATER_ONLY: {
+            target: "loading",
+            actions: ["loadWaterOnly"],
+            cond: "laundryNotEmptyAndWaterEmpty",
+          },
+          LOAD_WATER_AND_SOAP: {
+            target: "loading",
+            actions: ["loadWaterAndSoap"],
+            cond: "laundryNotEmptyAndWaterAndSoapEmpty",
+          },
+          DRAIN: {
+            target: "draining",
+            actions: ["setTimeToDrain"],
+            cond: "waterNotEmpty",
+          },
+          DRY: {
+            target: "drying",
+            actions: ["setTimeToDry"],
+            cond: "waterEmptyAndLaundryNotEmpty",
+          },
+          UNLOAD: {
+            target: "unloading",
+            cond: "laundryLeftOnly",
+          },
         },
       },
       loading: {
-        entry: "loadContext",
         on: {
-          WASH: "washing",
-          CANCEL: "idle",
+          WASH: {
+            target: "washing",
+            actions: ["setTimeToWash"],
+          },
         },
       },
       washing: {
-        entry: (context, event) => console.log(context),
         on: {
-          DONE: "idle",
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelWashing"],
+          },
         },
+        after: [
+          {
+            delay: 3000,
+            target: "idle",
+            actions: ["setTimeToZero"],
+          },
+        ],
       },
       draining: {
-        entry: "removeLaundrySoap",
         on: {
-          DONE: "idle",
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelDraining"],
+          },
         },
+        after: [
+          {
+            delay: 4000,
+            target: "idle",
+            actions: ["draining", "setTimeToZero"],
+          },
+        ],
       },
       drying: {
         on: {
-          DONE: "idle",
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelDrying"],
+          },
         },
+        after: [
+          {
+            delay: 3000,
+            target: "idle",
+            actions: ["drying", "setTimeToZero"],
+          },
+        ],
       },
       unloading: {
         on: {
-          DONE: "idle",
+          DONE: {
+            target: "idle",
+            actions: ["unloading"],
+          },
         },
       },
     },

@@ -8,6 +8,4 @@ const  washingService = interpret(washingMachineDryer).onTransition((states) => 
 })
 
 washingService.start();
-washingService.send({ type: "LOAD" });
-washingService.send({ type: "TO_WASH" });
-washingService.send({ type: "DONE" });
+washingService.send(["LOAD_WATER_LAUNDRY_AND_SOAP", "WASH"]);

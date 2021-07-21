@@ -20,6 +20,9 @@ const options = {
     setTimeToZero: assign({
       timer: (ctx, evt) => 0,
     }),
+    cancelWashing: assign({
+      timer: (ctx, evt) => timer / 2,
+    }),
     draining: assign({
       water_level: (ctx, evt) => 1,
     }),
@@ -94,7 +97,10 @@ const fetchMachine = Machine(
       },
       washing: {
         on: {
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelWashing"],
+          },
         },
         after: [
           {
@@ -108,7 +114,10 @@ const fetchMachine = Machine(
       },
       draining: {
         on: {
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelDraining"],
+          },
         },
         after: [
           {
@@ -122,7 +131,10 @@ const fetchMachine = Machine(
       },
       drying: {
         on: {
-          CANCEL: "idle",
+          CANCEL: {
+            target: "idle",
+            actions: ["cancelDrying"],
+          },
         },
         after: [
           {

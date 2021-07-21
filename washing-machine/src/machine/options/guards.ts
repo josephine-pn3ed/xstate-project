@@ -9,9 +9,7 @@ module.exports = {
     return ctx.laundry === 0 && ctx.laundry_soap === "";
   },
   laundryNotEmptyAndWaterAndSoapEmpty: (ctx: Context, _: EventObject) => {
-    return (
-      ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === ""
-    );
+    return ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === "";
   },
   waterAndLaundryEmpty: (ctx: Context, _: EventObject) => {
     return ctx.water_level === 0 && ctx.laundry === 0;

@@ -11,10 +11,10 @@ export type WashingEvent =
   | { type: "CANCEL" };
 
 export interface WashingContext {
-  water_level: Number;
-  laundry: Number;
-  laundry_soap: String;
-  timer: Number;
+  water_level: number;
+  laundry: number;
+  laundry_soap: string;
+  timer: number;
 }
 
 export type WashingState =

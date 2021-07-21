@@ -54,6 +54,7 @@ const washingMachineDryer = createMachine<
             cond: "laundryLeftOnly",
           },
         },
+        exit: (ctx, _) => console.log(ctx, "Assigning item here"),
       },
       loading: {
         on: {

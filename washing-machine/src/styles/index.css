@@ -186,18 +186,30 @@ body {
   border-radius: 50%;
   background: var(--darkest-gray);
   overflow: hidden;
-  animation: drumRotate 2s infinite; /*animation name*/
+  animation: drumRotate 2s infinite; 
+  /*animation name*/
 }
 
 /* Clothes inside machine */
-.drum::before {
+.clothes {
   content: "";
   position: absolute;
   width: 80px;
   height: 50px;
-  background: var(--accent-green);
+  background: red;
   border-radius: 40%;
   bottom: 0;
+}
+
+.clothes1 {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 50px;
+  background: var(--machine-white);
+  border-radius: 40%;
+  bottom: 0;
+  left: 0;
 }
 
 @keyframes drumRotate {

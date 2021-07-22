@@ -1,26 +1,29 @@
-import { Context } from "vm";
-import { EventObject } from "xstate";
 
-module.exports = {
-  laundryNotEmptyAndWaterEmpty: (ctx: Context, _: EventObject) => {
+import { WashingContext,WashingEvent } from "../types";
+import {  ConditionPredicate } from "xstate";
+
+const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>>= {
+  laundryNotEmptyAndWaterEmpty: (ctx) => {
     return ctx.laundry !== 0 && ctx.water_level <= 1;
   },
-  laundryAndSoapEmpty: (ctx: Context, _: EventObject) => {
+  laundryAndSoapEmpty: (ctx, _) => {
+    console.log("hhhhhhhhhhh", ctx.laundry === 0 && ctx.laundry_soap === "");
+    
     return ctx.laundry === 0 && ctx.laundry_soap === "";
   },
-  laundryNotEmptyAndWaterAndSoapEmpty: (ctx: Context, _: EventObject) => {
+  laundryNotEmptyAndWaterAndSoapEmpty: (ctx, _) => {
     return ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === "";
   },
-  waterAndLaundryEmpty: (ctx: Context, _: EventObject) => {
+  waterAndLaundryEmpty: (ctx, _) => {
     return ctx.water_level === 0 && ctx.laundry === 0;
   },
-  waterNotEmpty: (ctx: Context, _: EventObject) => {
+  waterNotEmpty: (ctx, _) => {
     return ctx.water_level > 1;
   },
-  waterEmptyAndLaundryNotEmpty: (ctx: Context, _: EventObject) => {
+  waterEmptyAndLaundryNotEmpty: (ctx, _) => {
     return ctx.water_level === 1 && ctx.laundry !== 0;
   },
-  laundryLeftOnly: (ctx: Context, _: EventObject) => {
+  laundryLeftOnly: (ctx, _) => {
     return (
       ctx.water_level === 0 &&
       ctx.laundry_soap === "" &&
@@ -29,3 +32,5 @@ module.exports = {
     );
   },
 };
+
+export default guards

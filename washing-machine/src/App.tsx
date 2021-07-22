@@ -7,7 +7,13 @@ import washingMachineDryer from "./machine/config";
 
 const App: React.FC = () => {
   const [state, send] = useMachine(washingMachineDryer);
-  console.log(state.context, state.value);
+  console.log(state.context, state.value,);
+
+  const handleOnClick =()=>{
+    send({
+      type:"LOAD_WATER_LAUNDRY_AND_SOAP"
+    })
+  }
   return (
     <div className="App">
       <Container maxWidth="sm">
@@ -18,7 +24,7 @@ const App: React.FC = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => send("LOAD_WATER_LAUNDRY_AND_SOAP")}
+                onClick={handleOnClick}
               >
                 LOAD
               </Button>
@@ -64,7 +70,7 @@ const App: React.FC = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => send("LOAD_WATER_LAUNDRY_AND_SOAP")}
+                onClick={handleOnClick}
               >
                 LOAD
               </Button>

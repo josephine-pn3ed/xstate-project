@@ -1,5 +1,6 @@
 import { createMachine } from "xstate";
 import options from "./options";
+// import {actions} from "./options/actions"
 import { WashingEvent, WashingContext, WashingState } from "./types";
 
 const washingMachineDryer = createMachine<
@@ -18,6 +19,7 @@ const washingMachineDryer = createMachine<
     },
     states: {
       idle: {
+        entry: [(ctx) => console.log("IDOLLL", ctx)],
         on: {
           LOAD_WATER_AND_LAUNDRY: {
             target: "loading",
@@ -25,9 +27,14 @@ const washingMachineDryer = createMachine<
             cond: "waterAndLaundryEmpty",
           },
           LOAD_WATER_LAUNDRY_AND_SOAP: {
-            target: "loading",
-            actions: ["loadWaterLaundryAndSoap"],
             cond: "laundryAndSoapEmpty",
+            actions: [
+              "loadWaterLaundryAndSoap",
+              () => {
+                console.log("******************");
+              },
+            ],
+            target: "loading",
           },
           LOAD_WATER_ONLY: {
             target: "loading",
@@ -57,58 +64,62 @@ const washingMachineDryer = createMachine<
         exit: (ctx, _) => console.log(ctx, "Assigning item here"),
       },
       loading: {
+        entry: [(ctx) => console.log("CONTEXTTTtt", ctx)],
         on: {
           WASH: {
             target: "washing",
             actions: ["setTimeToWash"],
           },
         },
+        exit: (ctx, _) => console.log(ctx, "Loading item here"),
       },
       washing: {
+        invoke: {
+          src: "washingTimer",
+        },
         on: {
-          CANCEL: {
+          WashingTimeout: {
             target: "idle",
-            actions: ["cancelWashing"],
           },
         },
-        after: [
-          {
-            delay: 3000,
-            target: "idle",
-            actions: ["setTimeToZero"],
-          },
-        ],
       },
       draining: {
+        invoke: {
+          src: "drainingTimer",
+        },
         on: {
-          CANCEL: {
+          DrainingTimeout: {
             target: "idle",
-            actions: ["cancelDraining"],
+            actions: ["draining"],
           },
         },
-        after: [
-          {
-            delay: 4000,
-            target: "idle",
-            actions: ["draining", "setTimeToZero"],
-          },
-        ],
       },
       drying: {
+        invoke: {
+          src: "dryingTimer",
+        },
         on: {
-          CANCEL: {
+          DryingTimeout: {
             target: "idle",
-            actions: ["cancelDrying"],
+            actions: ["drying"],
           },
         },
-        after: [
-          {
-            delay: 3000,
-            target: "idle",
-            actions: ["drying", "setTimeToZero"],
-          },
-        ],
       },
+      // waiting: {
+      //   initial: "check_powder",
+      //   states: {
+      //     check_powder: {
+      //       after: {
+      //         1000: "check_water"
+      //       }
+      //     },
+      //     check_water: {
+      //       after: {
+      //         2000: "washing"
+      //       }
+      //     }
+      //   }
+      // },
       unloading: {
         on: {
           DONE: {

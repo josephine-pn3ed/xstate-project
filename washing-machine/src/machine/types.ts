@@ -8,7 +8,10 @@ export type WashingEvent =
   | { type: "UNLOAD" }
   | { type: "WASH" }
   | { type: "DONE" }
-  | { type: "CANCEL" };
+  | { type: "CANCEL" }
+  | { type: "WashingTimeout" }
+  | { type: "DrainingTimeout" }
+  | { type: "DryingTimeout" };
 
 export interface WashingContext {
   water_level: number;

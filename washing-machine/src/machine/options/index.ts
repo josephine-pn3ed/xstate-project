@@ -1,55 +1,20 @@
-const {
-  loadWaterOnly,
-  loadWaterAndLaundry,
-  loadWaterAndSoap,
-  loadWaterLaundryAndSoap,
-  setTimeToWash,
-  setTimeToDrain,
-  setTimeToDry,
-  setTimeToZero,
-  cancelWashing,
-  draining,
-  cancelDraining,
-  drying,
-  cancelDrying,
-  unloading,
-} = require("./actions");
-const {
-  laundryNotEmptyAndWaterEmpty,
-  laundryAndSoapEmpty,
-  laundryNotEmptyAndWaterAndSoapEmpty,
-  waterAndLaundryEmpty,
-  waterNotEmpty,
-  waterEmptyAndLaundryNotEmpty,
-  laundryLeftOnly,
-} = require("./guards");
 
-const options = {
-  actions: {
-    loadWaterOnly,
-    loadWaterAndLaundry,
-    loadWaterAndSoap,
-    loadWaterLaundryAndSoap,
-    setTimeToWash,
-    setTimeToDrain,
-    setTimeToDry,
-    setTimeToZero,
-    cancelWashing,
-    draining,
-    cancelDraining,
-    drying,
-    cancelDrying,
-    unloading,
-  },
-  guards: {
-    laundryNotEmptyAndWaterEmpty,
-    laundryAndSoapEmpty,
-    laundryNotEmptyAndWaterAndSoapEmpty,
-    waterAndLaundryEmpty,
-    waterNotEmpty,
-    waterEmptyAndLaundryNotEmpty,
-    laundryLeftOnly,
-  },
-};
+// import { Context } from "vm";
+import {WashingContext,WashingEvent} from '../types'
+import {MachineOptions } from "xstate";
+import actions from './actions';
+import services from './services';
+import guards from './guards';
+
+
+
+const options:MachineOptions<WashingContext,WashingEvent> = {
+    actions,
+    guards,
+    activities:{},
+    delays:{},
+    services
+  };
+  
 
 export default options;

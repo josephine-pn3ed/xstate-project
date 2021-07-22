@@ -2,7 +2,6 @@ import {  ServiceConfig, Sender } from "xstate";
 import { WashingContext, WashingEvent } from "../types";
 
 const services: Record<any, ServiceConfig<WashingContext, WashingEvent>> = {
-   
   washingTimer: (ctx, event) => (send: Sender<WashingEvent>) => {
     setTimeout(() => {
       send({

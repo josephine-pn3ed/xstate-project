@@ -7,85 +7,89 @@ import washingMachineDryer from "./machine/config";
 
 const App: React.FC = () => {
   const [state, send] = useMachine(washingMachineDryer);
-  console.log(state.context, state.value,);
+  console.log(state.context, "-----", state.value);
 
-  const handleOnClick =()=>{
-    send({
-      type:"LOAD_WATER_LAUNDRY_AND_SOAP"
-    })
-  }
   return (
-    <div className="App">
+    <div className="App-header">
       <Container maxWidth="sm">
-        <WashingMachine />
-        {state.value !== "idle" ? (
+        <WashingMachine value={state.value} context={state.context} />
+        {/* {(state.value === "idle" || state.value === "loading") && ( */}
           <Grid container spacing={3}>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <Button
                 fullWidth
-                variant="outlined"
-                onClick={handleOnClick}
+                variant="contained"
+                onClick={() => send("LOAD_WATER")}
               >
-                LOAD
+                LOAD WATER
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => send("LOAD_SOAP")}
+              >
+                LOAD SOAP
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => send("LOAD_LAUNDRY")}
+              >
+                LOAD LAUNDRY
               </Button>
             </Grid>
             <Grid item xs={3}>
               <Button
                 fullWidth
-                variant="outlined"
+                variant="contained"
                 onClick={() => send("DRAIN")}
               >
                 DRAIN
               </Button>
             </Grid>
             <Grid item xs={3}>
-              <Button fullWidth variant="outlined">
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => send("UNLOAD")}
+              >
                 UNLOAD
               </Button>
             </Grid>
             <Grid item xs={3}>
-              <Button fullWidth variant="outlined" onClick={() => send("WASH")}>
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => send("WASH")}
+              >
                 WASH
               </Button>
             </Grid>
             <Grid item xs={3}>
-              <Button fullWidth variant="outlined">
+              <Button fullWidth variant="contained">
                 CANCEL
               </Button>
             </Grid>
             <Grid item xs={3}>
-              <Button fullWidth variant="outlined">
+              <Button fullWidth variant="contained" onClick={() => send("DRY")}>
                 DRY
               </Button>
             </Grid>
             <Grid item xs={3}>
-              <Button fullWidth variant="outlined">
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={() => send("DONE")}
+              >
                 DONE
               </Button>
             </Grid>
           </Grid>
-        ) : (
-          <Grid container spacing={3}>
-            <Grid item xs={3}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={handleOnClick}
-              >
-                LOAD
-              </Button>
-            </Grid>
-            <Grid item xs={3}>
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={() => send("DRAIN")}
-              >
-                DRAIN
-              </Button>
-            </Grid>
-          </Grid>
-        )}
+        {/* )} */}
       </Container>
     </div>
   );

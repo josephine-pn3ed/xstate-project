@@ -1,6 +1,5 @@
 import { createMachine } from "xstate";
 import options from "./options";
-// import {actions} from "./options/actions"
 import { WashingEvent, WashingContext, WashingState } from "./types";
 
 const washingMachineDryer = createMachine<
@@ -19,59 +18,42 @@ const washingMachineDryer = createMachine<
     },
     states: {
       idle: {
-        entry: [(ctx) => console.log("IDOLLL", ctx)],
         on: {
-          LOAD_WATER_AND_LAUNDRY: {
-            target: "loading",
-            actions: ["loadWaterAndLaundry"],
-            cond: "waterAndLaundryEmpty",
+          LOAD_WATER: {
+            // target: "loading",
+            actions: ["loadWater"],
+            cond: "isWaterEmpty",
           },
-          LOAD_WATER_LAUNDRY_AND_SOAP: {
-            cond: "laundryAndSoapEmpty",
-            actions: [
-              "loadWaterLaundryAndSoap",
-              () => {
-                console.log("******************");
-              },
-            ],
-            target: "loading",
+          LOAD_LAUNDRY: {
+            // cond: "isLaundryAndSoapEmpty",
+            actions: ["loadLaundry"],
+            target: "idle",
           },
-          LOAD_WATER_ONLY: {
-            target: "loading",
-            actions: ["loadWaterOnly"],
-            cond: "laundryNotEmptyAndWaterEmpty",
+          LOAD_SOAP: {
+            // target: "loading",
+            actions: ["loadSoap"],
+            // cond: "isLaundryNotEmptyAndWaterAndSoapEmpty",
           },
-          LOAD_WATER_AND_SOAP: {
-            target: "loading",
-            actions: ["loadWaterAndSoap"],
-            cond: "laundryNotEmptyAndWaterAndSoapEmpty",
+          WASH: {
+            target: "washing",
+            actions: ["setTimeToWash"],
+            cond: "isThereWaterAndLaundry"
           },
           DRAIN: {
             target: "draining",
-            actions: ["setTimeToDrain"],
-            cond: "waterNotEmpty",
+            actions: ["emptyWaterLvl"],
+            cond: "isWaterNotEmpty",
           },
           DRY: {
             target: "drying",
             actions: ["setTimeToDry"],
-            cond: "waterEmptyAndLaundryNotEmpty",
+            // cond: "isWaterEmptyAndLaundryNotEmpty",
           },
           UNLOAD: {
             target: "unloading",
-            cond: "laundryLeftOnly",
+            // cond: "isLaundryLeftOnly",
           },
         },
-        exit: (ctx, _) => console.log(ctx, "Assigning item here"),
-      },
-      loading: {
-        entry: [(ctx) => console.log("CONTEXTTTtt", ctx)],
-        on: {
-          WASH: {
-            target: "washing",
-            actions: ["setTimeToWash"],
-          },
-        },
-        exit: (ctx, _) => console.log(ctx, "Loading item here"),
       },
       washing: {
         invoke: {
@@ -90,7 +72,7 @@ const washingMachineDryer = createMachine<
         on: {
           DrainingTimeout: {
             target: "idle",
-            actions: ["draining"],
+            // actions: ["draining"],
           },
         },
       },

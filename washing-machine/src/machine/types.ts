@@ -1,8 +1,8 @@
 export type WashingEvent =
-  | { type: "LOAD_WATER_AND_LAUNDRY" }
-  | { type: "LOAD_WATER_LAUNDRY_AND_SOAP" }
-  | { type: "LOAD_WATER_ONLY" }
-  | { type: "LOAD_WATER_AND_SOAP" }
+  | { type: "LOAD_WATER" }
+  | { type: "LOAD_LAUNDRY" }
+  | { type: "LOAD_SOAP" }
+  // | { type: "LOAD_WATER_AND_SOAP" }
   | { type: "DRAIN" }
   | { type: "DRY" }
   | { type: "UNLOAD" }

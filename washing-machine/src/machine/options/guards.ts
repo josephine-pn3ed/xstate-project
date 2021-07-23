@@ -13,7 +13,9 @@ const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>> = {
     return ctx.laundry === 0 && ctx.laundry_soap === "";
   },
   isLaundryNotEmptyAndWaterAndSoapEmpty: (ctx, _) => {
-    return ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === "";
+    return (
+      ctx.laundry !== 0 && ctx.water_level <= 1 && ctx.laundry_soap === ""
+    );
   },
   isWaterEmpty: (ctx, _) => {
     return ctx.water_level === 0;
@@ -25,10 +27,16 @@ const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>> = {
     return ctx.water_level > 0 && ctx.laundry > 0;
   },
   isWaterEmptyAndLaundryNotEmpty: (ctx, _) => {
-    return ctx.water_level <= 0 && ctx.laundry !== 0;
+    return ctx.water_level === 1 && ctx.laundry !== 0;
   },
-  isLaundryLeftOnly: (ctx, _) => {
-    return ctx.water_level < 1 && ctx.laundry_soap === "" && ctx.laundry < 0;
+  isLaundryLeft: (ctx, _) => {
+    return ctx.water_level === 0 && ctx.laundry_soap === "" && ctx.laundry !== 0;
+  },
+  isLaundryEmpty: (ctx, _) => {
+    return ctx.laundry === 0;
+  },
+  isSoapEmpty: (ctx, _) => {
+    return ctx.laundry_soap === "";
   },
 };
 

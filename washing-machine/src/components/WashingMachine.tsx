@@ -11,8 +11,8 @@ export const WashingMachine = (props: Props) => {
   return (
     <div className="box-canvas">
       <div className="machine">
-        <div className="drawer">{value}</div>
-        <div className="panel"></div>
+        <div className="drawer"></div>
+        <div className="panel">{value}</div>
         <div className="door">
           <div className={`drum ${value === "washing" && "isWashing"}`}>
             <div className="water">
@@ -20,9 +20,28 @@ export const WashingMachine = (props: Props) => {
               <div className={context.water_level ? "ripple-two" : ""}></div>
               <div className={context.water_level ? "ripple-three" : ""}></div>
             </div>
+            <div>
+              <div
+                className={context.laundry_soap ? "soap soap-one" : ""}
+              ></div>
+              <div
+                className={context.laundry_soap ? "soap soap-two" : ""}
+              ></div>
+              <div
+                className={context.laundry_soap ? " soap soap-three" : ""}
+              ></div>
+              <div
+                className={context.laundry_soap ? "soap soap-four" : ""}
+              ></div>
+              <div
+                className={context.laundry_soap ? "soap soap-five" : ""}
+              ></div>
+              <div className={context.laundry_soap ? "soap-six" : ""}></div>
+            </div>
             <span className={context.laundry ? "clothes" : ""}></span>
             <span className={context.laundry ? "clothes1" : ""}></span>
           </div>
+          <div className="playground"></div>
         </div>
       </div>
     </div>

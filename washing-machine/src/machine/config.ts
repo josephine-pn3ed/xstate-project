@@ -20,38 +20,39 @@ const washingMachineDryer = createMachine<
       idle: {
         on: {
           LOAD_WATER: {
-            // target: "loading",
-            actions: ["loadWater"],
             cond: "isWaterEmpty",
+            actions: ["loadWater"],
+            target: "idle",
           },
           LOAD_LAUNDRY: {
-            // cond: "isLaundryAndSoapEmpty",
+            cond: "isLaundryEmpty",
             actions: ["loadLaundry"],
             target: "idle",
           },
           LOAD_SOAP: {
-            // target: "loading",
+            cond: "isSoapEmpty",
+            target: "idle",
             actions: ["loadSoap"],
-            // cond: "isLaundryNotEmptyAndWaterAndSoapEmpty",
           },
           WASH: {
-            target: "washing",
+            cond: "isThereWaterAndLaundry",
             actions: ["setTimeToWash"],
-            cond: "isThereWaterAndLaundry"
+            target: "washing",
           },
           DRAIN: {
-            target: "draining",
-            actions: ["emptyWaterLvl"],
             cond: "isWaterNotEmpty",
+            actions: ["emptyWaterLvl"],
+            target: "draining",
           },
           DRY: {
-            target: "drying",
+            cond: "isWaterEmptyAndLaundryNotEmpty",
             actions: ["setTimeToDry"],
-            // cond: "isWaterEmptyAndLaundryNotEmpty",
+            target: "drying",
           },
           UNLOAD: {
+            cond: "isLaundryLeft",
+            actions:["unloading"],
             target: "unloading",
-            // cond: "isLaundryLeftOnly",
           },
         },
       },
@@ -72,7 +73,7 @@ const washingMachineDryer = createMachine<
         on: {
           DrainingTimeout: {
             target: "idle",
-            // actions: ["draining"],
+            actions: ["draining"],
           },
         },
       },
@@ -105,11 +106,14 @@ const washingMachineDryer = createMachine<
       unloading: {
         on: {
           DONE: {
-            target: "idle",
+            target: "done",
             actions: ["unloading"],
           },
         },
       },
+      done:{
+        type:"final"
+      }
     },
   },
   options

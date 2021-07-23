@@ -11,7 +11,8 @@ export type WashingEvent =
   | { type: "CANCEL" }
   | { type: "WashingTimeout" }
   | { type: "DrainingTimeout" }
-  | { type: "DryingTimeout" };
+  | { type: "DryingTimeout" }
+  // | {type:""};
 
 export interface WashingContext {
   water_level: number;
@@ -26,4 +27,5 @@ export type WashingState =
   | { value: "washing"; context: WashingContext }
   | { value: "draining"; context: WashingContext }
   | { value: "drying"; context: WashingContext }
-  | { value: "unloading"; context: WashingContext };
+  | { value: "unloading"; context: WashingContext }
+  | { value: "done"; context: WashingContext };

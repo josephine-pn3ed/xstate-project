@@ -19,7 +19,6 @@ const App: React.FC = () => {
   return (
     <div className="App-header">
       <Container maxWidth="sm">
-        {Math.floor(context.timer / 1000) % 60}
         <WashingMachine value={val} context={state.context} />
         <Grid container spacing={3}>
           <Grid item xs={4}>

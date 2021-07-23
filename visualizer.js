@@ -28,6 +28,9 @@ const options = {
     unloading: assign({
       laundry: (ctx, _) => 0,
     }),
+    timerCountdown: assign({
+      timer: (ctx) => (ctx.timer -= 1),
+    }),
   },
   guards: {
     isWaterEmpty: (ctx, _) => {
@@ -55,32 +58,32 @@ const options = {
     },
   },
   services: {
-    washingTimer: () => (send) => {
+    washingTimer: (ctx) => (send) => {
       timeout = setTimeout(() => {
         send({
           type: "WASHING_TIMEOUT",
         });
-      }, 10000);
+      }, ctx.timer);
       return () => {
         clearTimeout(timeout);
       };
     },
-    drainingTimer: () => (send) => {
+    drainingTimer: (ctx) => (send) => {
       timeout = setTimeout(() => {
         send({
           type: "DRAINING_TIMEOUT",
         });
-      }, 10000);
+      }, ctx.timer);
       return () => {
         clearTimeout(timeout);
       };
     },
-    dryingTimer: () => (send) => {
+    dryingTimer: (ctx) => (send) => {
       timeout = setTimeout(() => {
         send({
           type: "DRYING_TIMEOUT",
         });
-      }, 10000);
+      }, ctx.timer);
       return () => {
         clearTimeout(timeout);
       };
@@ -96,7 +99,7 @@ const fetchMachine = Machine(
       water_level: 0,
       laundry: 0,
       laundry_soap: "",
-      timer: 0,
+      timer: 5000,
     },
     states: {
       idle: {

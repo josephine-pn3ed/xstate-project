@@ -1,37 +1,36 @@
-import {  ServiceConfig } from "xstate";
+import { ServiceConfig } from "xstate";
 import { WashingContext, WashingEvent } from "../../types";
-let timeout:NodeJS.Timeout
+let timeout: NodeJS.Timeout;
 const services: Record<any, ServiceConfig<WashingContext, WashingEvent>> = {
-  
-  washingTimer: (ctx, event) => (send) => {
+  washingTimer: (ctx) => (send) => {
     timeout = setTimeout(() => {
       send({
-        type: "WashingTimeout",
+        type: "WASHING_TIMEOUT",
       });
-    }, 10000);
-    return ()=>{
-      clearTimeout(timeout)
-    }
+    }, ctx.timer);
+    return () => {
+      clearTimeout(timeout);
+    };
   },
-  drainingTimer: (ctx, event) => (send) => {
+  drainingTimer: (ctx) => (send) => {
     timeout = setTimeout(() => {
       send({
-        type: "DrainingTimeout",
+        type: "DRAINING_TIMEOUT",
       });
-    }, 10000);
-    return ()=>{
-      clearTimeout(timeout)
-    }
+    }, ctx.timer);
+    return () => {
+      clearTimeout(timeout);
+    };
   },
-  dryingTimer: (ctx, event) => (send) => {
+  dryingTimer: (ctx) => (send) => {
     timeout = setTimeout(() => {
       send({
-        type: "DryingTimeout",
+        type: "DRYING_TIMEOUT",
       });
-    }, 10000);
-    return ()=>{
-      clearTimeout(timeout)
-    }
+    }, ctx.timer);
+    return () => {
+      clearTimeout(timeout);
+    };
   },
 };
 export default services;

@@ -14,10 +14,11 @@ const washingMachineDryer = createMachine<
       water_level: 0,
       laundry: 0,
       laundry_soap: "",
-      timer: 0,
+      timer: 5000,
     },
     states: {
       idle: {
+        id: "idle",
         on: {
           LOAD_WATER: {
             cond: "isWaterEmpty",
@@ -33,6 +34,10 @@ const washingMachineDryer = createMachine<
             cond: "isSoapEmpty",
             target: "idle",
             actions: ["loadSoap"],
+          },
+          AUTOMATIC: {
+            target: "automatic",
+            cond: "isThereWaterAndLaundry",
           },
           WASH: {
             cond: "isThereWaterAndLaundry",
@@ -51,8 +56,45 @@ const washingMachineDryer = createMachine<
           },
           UNLOAD: {
             cond: "isLaundryLeft",
-            actions:["unloading"],
-            target: "unloading",
+            actions: ["unloading"],
+            target: "#idle",
+          },
+        },
+      },
+      automatic: {
+        initial: "washing",
+        states: {
+          washing: {
+            invoke: {
+              src: "washingTimer",
+            },
+            on: {
+              WASHING_TIMEOUT: {
+                target: "draining",
+              },
+            },
+          },
+          draining: {
+            invoke: {
+              src: "drainingTimer",
+            },
+            on: {
+              DRAINING_TIMEOUT: {
+                target: "drying",
+                actions: ["draining"],
+              },
+            },
+          },
+          drying: {
+            invoke: {
+              src: "dryingTimer",
+            },
+            on: {
+              DRYING_TIMEOUT: {
+                target: "#idle",
+                actions: ["drying"],
+              },
+            },
           },
         },
       },
@@ -61,8 +103,8 @@ const washingMachineDryer = createMachine<
           src: "washingTimer",
         },
         on: {
-          WashingTimeout: {
-            target: "idle",
+          WASHING_TIMEOUT: {
+            target: "#idle",
           },
         },
       },
@@ -71,8 +113,8 @@ const washingMachineDryer = createMachine<
           src: "drainingTimer",
         },
         on: {
-          DrainingTimeout: {
-            target: "idle",
+          DRAINING_TIMEOUT: {
+            target: "#idle",
             actions: ["draining"],
           },
         },
@@ -82,38 +124,12 @@ const washingMachineDryer = createMachine<
           src: "dryingTimer",
         },
         on: {
-          DryingTimeout: {
-            target: "idle",
+          DRYING_TIMEOUT: {
+            target: "#idle",
             actions: ["drying"],
           },
         },
       },
-      // waiting: {
-      //   initial: "check_powder",
-      //   states: {
-      //     check_powder: {
-      //       after: {
-      //         1000: "check_water"
-      //       }
-      //     },
-      //     check_water: {
-      //       after: {
-      //         2000: "washing"
-      //       }
-      //     }
-      //   }
-      // },
-      unloading: {
-        on: {
-          DONE: {
-            target: "done",
-            actions: ["unloading"],
-          },
-        },
-      },
-      done:{
-        type:"final"
-      }
     },
   },
   options

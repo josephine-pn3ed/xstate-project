@@ -18,30 +18,20 @@ const actions: ActionFunctionMap<WashingContext, WashingEvent> = {
     water_level: (ctx, _) => 1,
   }),
   setTimeToDry: assign({
-    timer: (ctx, _) => 3000,
-  }),
-  setTimeToZero: assign({
-    timer: (ctx, _) => 0,
-  }),
-  cancelWashing: assign({
-    timer: (ctx, _) => ctx.timer / 2,
+    timer: (ctx, _) => 5000,
   }),
   draining: assign({
-    water_level: (ctx, _) => 1,
+    water_level: (ctx, _) => 0,
     laundry_soap: (ctx, _) => "",
-  }),
-  cancelDraining: assign({
-    water_level: (ctx, _) => ctx.water_level / 2,
-    timer: (ctx, _) => ctx.timer / 2,
   }),
   drying: assign({
     water_level: (ctx, _) => 0,
   }),
-  cancelDrying: assign({
-    timer: (ctx, _) => ctx.timer / 2,
-  }),
   unloading: assign({
     laundry: (ctx, _) => 0,
+  }),
+  timerCountdown: assign({
+    timer: (ctx) => (ctx.timer -= 1),
   }),
 };
 export default actions;

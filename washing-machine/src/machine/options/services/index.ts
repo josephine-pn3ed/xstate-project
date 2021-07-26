@@ -1,9 +1,9 @@
 import { ServiceConfig } from "xstate";
-import { WashingContext, WashingEvent } from "../../types";
+import { IWashingContext, IWashingEvent } from "../../types";
 
 
 import callbacks from "./callbacks";
-const services: Record<any,ServiceConfig<WashingContext, WashingEvent>> = {
+const services: Record<any,ServiceConfig<IWashingContext, IWashingEvent>> = {
   ...callbacks,
 };
 

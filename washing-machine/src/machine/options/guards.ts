@@ -1,7 +1,7 @@
-import { WashingContext, WashingEvent } from "../types";
+import { IWashingContext, IWashingEvent } from "../types";
 import { ConditionPredicate } from "xstate";
 
-const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>> = {
+const guards: Record<any, ConditionPredicate<IWashingContext, IWashingEvent>> = {
   isWaterEmpty: (ctx, _) => {
     return ctx.water_level === 0;
   },
@@ -25,6 +25,7 @@ const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>> = {
   isSoapEmpty: (ctx, _) => {
     return ctx.laundry_soap === "";
   },
+  
 };
 
 export default guards;

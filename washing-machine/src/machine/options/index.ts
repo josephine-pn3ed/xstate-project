@@ -1,5 +1,5 @@
 import { MachineOptions } from "xstate";
-import { WashingContext, WashingEvent } from "../types";
+import { IWashingContext, IWashingEvent } from "../types";
 
 import actions from "./actions";
 // import activities from "./activities";
@@ -7,7 +7,7 @@ import actions from "./actions";
 import guards from "./guards";
 import services from "./services";
 
-const options: MachineOptions<WashingContext, WashingEvent> = {
+export const options: MachineOptions<IWashingContext, IWashingEvent> = {
   actions,
   activities:{},
   delays:{},

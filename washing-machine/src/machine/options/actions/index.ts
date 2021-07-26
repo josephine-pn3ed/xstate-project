@@ -1,8 +1,8 @@
-import { WashingContext, WashingEvent } from "../../types";
+import { IWashingContext, IWashingEvent } from "../../types";
 import { ActionFunctionMap } from "xstate";
 import assigners from "./assigners";
 
-const actions: ActionFunctionMap<WashingContext, WashingEvent> = {
+const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   ...assigners,
 };
 

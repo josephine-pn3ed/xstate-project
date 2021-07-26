@@ -1,18 +1,20 @@
 import { StateValue } from "xstate";
-import { WashingContext } from "../machine/types";
+import { IWashingContext } from "../machine/types";
 import "../styles/index.css";
 interface Props {
   value: StateValue;
-  context: WashingContext;
+  context: IWashingContext;
 }
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
+  console.log(context.timer,"timeeeeeeeeeer");
+  
   return (
     <>
       <div className="box-canvas">
         <div className="machine">
-          <div className="drawer">{Math.floor(context.timer / 1000) % 60}</div>
+          <div className="drawer">{context.timer}</div>
           <div className="panel">{value}</div>
           <div className="door">
             <div

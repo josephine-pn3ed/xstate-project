@@ -25,6 +25,9 @@ const guards: Record<any, ConditionPredicate<WashingContext, WashingEvent>> = {
   isSoapEmpty: (ctx, _) => {
     return ctx.laundry_soap === "";
   },
+  isTimeEqualToZero: (ctx, _) => {
+    return ctx.timer === 0
+  }
 };
 
 export default guards;

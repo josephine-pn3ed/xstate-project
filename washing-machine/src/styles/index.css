@@ -88,17 +88,6 @@
   padding-top: 6px;
 }
 
-/* Light indicator in panel */
-/* .panel::before {
-  position: absolute;
-  width: 82px;
-  height: 28px;
-  background: #0a0a0a;
-  left: 193px;
-  top: 30px;
-  border-radius: 4px;
-} */
-
 /* Machine dial */
 .panel::after {
   content: "";

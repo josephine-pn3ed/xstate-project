@@ -12,7 +12,9 @@ export const WashingMachine = (props: Props) => {
     <>
       <div className="box-canvas">
         <div className="machine">
-          <div className="drawer">{Math.floor(context.timer / 1000) % 60}</div>
+          {/* <div className="drawer">{Math.floor(context.timer / 1000) % 60}</div> */}
+          <div className="drawer">{context.timer}</div>
+
           <div className="panel">{value}</div>
           <div className="door">
             <div

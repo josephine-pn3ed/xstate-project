@@ -12,7 +12,8 @@ export type WashingEvent =
   | { type: "WASHING_TIMEOUT" }
   | { type: "DRAINING_TIMEOUT" }
   | { type: "DRYING_TIMEOUT" }
-  | { type: "AUTOMATIC" };
+  | { type: "AUTOMATIC" }
+  | { type: "TICK" };
 
 export interface WashingContext {
   water_level: number;

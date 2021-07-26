@@ -14,7 +14,7 @@ const washingMachineDryer = createMachine<
       water_level: 0,
       laundry: 0,
       laundry_soap: "",
-      timer: 5000,
+      timer: 3,
     },
     states: {
       idle: {
@@ -66,35 +66,65 @@ const washingMachineDryer = createMachine<
         states: {
           washing: {
             invoke: {
-              src: "washingTimer",
+              src: "ticker",
             },
             on: {
-              WASHING_TIMEOUT: {
-                target: "draining",
-              },
+              TICK: {
+                actions: ["timerCountdown"]
+              }
             },
+            // on: {
+            //   WASHING_TIMEOUT: {
+            //     target: "draining",
+            //   },
+            // },
+            always: {
+              target: "draining",
+              actions: ["setTime"],
+              cond: 'isTimeEqualToZero'
+            }
           },
           draining: {
             invoke: {
-              src: "drainingTimer",
+              src: "ticker",
             },
             on: {
-              DRAINING_TIMEOUT: {
-                target: "drying",
-                actions: ["draining"],
-              },
+              TICK: {
+                actions: ["timerCountdown"]
+              }
             },
+            // on: {
+            //   DRAINING_TIMEOUT: {
+            //     target: "drying",
+            //     actions: ["draining"],
+            //   },
+            // },
+            always: {
+              target: "drying",
+              actions: ["draining","setTime"],
+              cond: 'isTimeEqualToZero'
+            }
           },
           drying: {
             invoke: {
-              src: "dryingTimer",
+              src: "ticker",
             },
             on: {
-              DRYING_TIMEOUT: {
-                target: "#idle",
-                actions: ["drying"],
-              },
+              TICK: {
+                actions: ["timerCountdown"]
+              }
             },
+            // on: {
+            //   DRYING_TIMEOUT: {
+            //     target: "#idle",
+            //     actions: ["drying"],
+            //   },
+            // },
+            always: {
+              target: "#idle",
+              actions: ["drying","setTime"],
+              cond: 'isTimeEqualToZero'
+            }
           },
         },
       },

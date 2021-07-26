@@ -8,7 +8,7 @@ const services: Record<any, ServiceConfig<WashingContext, WashingEvent>> = {
       send({
         type: "WashingTimeout",
       });
-    }, 10000);
+    }, ctx.timer);
     return ()=>{
       clearTimeout(timeout)
     }
@@ -18,7 +18,7 @@ const services: Record<any, ServiceConfig<WashingContext, WashingEvent>> = {
       send({
         type: "DrainingTimeout",
       });
-    }, 10000);
+    }, ctx.timer);
     return ()=>{
       clearTimeout(timeout)
     }
@@ -28,7 +28,7 @@ const services: Record<any, ServiceConfig<WashingContext, WashingEvent>> = {
       send({
         type: "DryingTimeout",
       });
-    }, 10000);
+    }, ctx.timer);
     return ()=>{
       clearTimeout(timeout)
     }

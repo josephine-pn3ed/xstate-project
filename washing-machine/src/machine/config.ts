@@ -63,6 +63,7 @@ const washingMachineDryer = createMachine<
         on: {
           WashingTimeout: {
             target: "idle",
+            actions: ["setTimeToZero"]
           },
         },
       },
@@ -73,7 +74,7 @@ const washingMachineDryer = createMachine<
         on: {
           DrainingTimeout: {
             target: "idle",
-            actions: ["draining"],
+            actions: ["draining", "setTimeToZero"],
           },
         },
       },
@@ -84,7 +85,7 @@ const washingMachineDryer = createMachine<
         on: {
           DryingTimeout: {
             target: "idle",
-            actions: ["drying"],
+            actions: ["drying", "setTimeToZero"],
           },
         },
       },

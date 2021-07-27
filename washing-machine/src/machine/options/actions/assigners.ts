@@ -37,6 +37,7 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   unloading: assign({
     laundry: (ctx, _) => 0,
   }),
+  
   timerCountdown: assign({
     timer: (ctx) => ((Math.floor(ctx.timer / 1000) % 60) - 1),
   }),

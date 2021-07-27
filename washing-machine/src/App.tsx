@@ -1,5 +1,4 @@
 import "./App.css";
-// import React, { useEffect, useState } from "react";
 import { useMachine } from "@xstate/react";
 import { Grid, Container, Button } from "@material-ui/core";
 import { WashingMachine } from "./components/WashingMachine";
@@ -8,20 +7,12 @@ import { StateValue } from "xstate";
 
 const App: React.FC = () => {
   const [state, send] = useMachine(spawnMachine({}));
-
   const { context, value } = state;
-
   let val: StateValue = typeof value === "string" ? value : value.automatic;
-
-
-  // const isNotIdle: boolean = val !== "idle" ? true : false;
-
   if (val === "draining" && typeof value === "string") {
     localStorage.setItem("drained", "laundryHasBeenDrained");
   }
-
-  console.log(state.context.timer, state, "timer");
-  console.log(val, "value");
+  console.log(state.context, state, "status");
 
   return (
     <div className="App-header">
@@ -43,7 +34,12 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={() => send("LOAD_SOAP")}
-              disabled={context.laundry_soap !== "" || !state.matches("idle")}
+              disabled={
+                context.water_level === 0 ||
+                !state.matches("idle") ||
+                context.laundry_soap !== ""
+              }
+              // disabled={context.laundry_soap === "" || !state.matches("idle")}
             >
               LOAD SOAP
             </Button>
@@ -106,9 +102,12 @@ const App: React.FC = () => {
               variant="contained"
               onClick={() => send("AUTOMATIC")}
               disabled={
-                (context.water_level <= 0 && context.laundry <= 0) ||
+                (context.water_level <= 0 &&
+                  context.laundry <= 0 &&
+                  context.laundry_soap !== "") ||
                 context.water_level <= 0 ||
                 context.laundry <= 0 ||
+                context.laundry_soap === "" ||
                 !state.matches("idle")
               }
             >

@@ -28,11 +28,11 @@ export const config: MachineConfig<
         },
         LOAD_SOAP: {
           cond: "isSoapEmpty",
-          target: "idle",
           actions: ["loadSoap"],
+          target: "idle",
         },
         AUTOMATIC: {
-          cond: "isThereWaterAndLaundry",
+          cond: "isThereWaterAndLaundryAndSoap",
           target: "automatic",
         },
         WASH: {
@@ -53,7 +53,7 @@ export const config: MachineConfig<
         UNLOAD: {
           cond: "isLaundryLeft",
           actions: ["unloading"],
-          target: "#idle",
+          target: "idle",
         },
       },
     },

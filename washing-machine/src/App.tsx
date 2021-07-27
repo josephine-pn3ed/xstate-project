@@ -1,5 +1,8 @@
 import "./App.css";
+<<<<<<< HEAD
 import React from "react";
+=======
+>>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
 import { useMachine } from "@xstate/react";
 import { Grid, Container, Button } from "@material-ui/core";
 import { WashingMachine } from "./components/WashingMachine";
@@ -8,16 +11,12 @@ import { StateValue } from "xstate";
 
 const App: React.FC = () => {
   const [state, send] = useMachine(spawnMachine({}));
-
   const { context, value } = state;
-
   let val: StateValue = typeof value === "string" ? value : value.automatic;
-
-  const isNotIdle: boolean = val !== "idle" ? true : false;
-
   if (val === "draining" && typeof value === "string") {
     localStorage.setItem("drained", "laundryHasBeenDrained");
   }
+<<<<<<< HEAD
 
   const loadWater = () => send("LOAD_WATER");
   const loadSoap = () => send("LOAD_SOAP");
@@ -29,6 +28,9 @@ const App: React.FC = () => {
   const unload = () => send("UNLOAD");
 
   console.log(value, state.context, "timer");
+=======
+  console.log(state.context, state, "status");
+>>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
 
   return (
     <div className="App-header">
@@ -49,8 +51,18 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
+<<<<<<< HEAD
               onClick={loadSoap}
               disabled={context.laundry_soap !== "" || !state.matches("idle")}
+=======
+              onClick={() => send("LOAD_SOAP")}
+              disabled={
+                context.water_level === 0 ||
+                !state.matches("idle") ||
+                context.laundry_soap !== ""
+              }
+              // disabled={context.laundry_soap === "" || !state.matches("idle")}
+>>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
             >
               LOAD SOAP
             </Button>
@@ -71,8 +83,8 @@ const App: React.FC = () => {
               variant="contained"
               onClick={wash}
               disabled={
-                (context.water_level <= 0 && context.laundry <= 0) ||
-                context.water_level <= 0 ||
+                (context.water_level <= 1 && context.laundry <= 0) ||
+                context.water_level <= 1 ||
                 context.laundry <= 0 ||
                 !state.matches("idle")
               }
@@ -113,9 +125,12 @@ const App: React.FC = () => {
               variant="contained"
               onClick={automatic}
               disabled={
-                (context.water_level <= 0 && context.laundry <= 0) ||
+                (context.water_level <= 0 &&
+                  context.laundry <= 0 &&
+                  context.laundry_soap !== "") ||
                 context.water_level <= 0 ||
                 context.laundry <= 0 ||
+                context.laundry_soap === "" ||
                 !state.matches("idle")
               }
             >

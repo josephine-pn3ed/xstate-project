@@ -10,16 +10,20 @@ const options = {
       laundry: (ctx, _) => 10,
     }),
     setTimeToWash: assign({
-      timer: (ctx, _) => 5000,
+      timer: (ctx, _) => 10,
+    }),
+    setTimeToDry: assign({
+      timer: (ctx, _) => 5,
+    }),
+
+    setTimeToDrain: assign({
+      timer: (ctx, _) => 5,
     }),
     emptyWaterLvl: assign({
       water_level: (ctx, _) => 1,
     }),
-    setTimeToDry: assign({
-      timer: (ctx, _) => 5000,
-    }),
     draining: assign({
-      water_level: (ctx, _) => 0,
+      water_level: (ctx, _) => 1,
       laundry_soap: (ctx, _) => "",
     }),
     drying: assign({
@@ -28,8 +32,11 @@ const options = {
     unloading: assign({
       laundry: (ctx, _) => 0,
     }),
-    timerCountdown: assign({
-      timer: (ctx) => (ctx.timer -= 1),
+    setTime: assign({
+      timer: (ctx) => 3,
+    }),
+    decrementTime: assign({
+      timer: (ctx) => ctx.timer - 1,
     }),
   },
   guards: {
@@ -43,7 +50,7 @@ const options = {
       return ctx.water_level > 0 && ctx.laundry > 0;
     },
     isWaterEmptyAndLaundryNotEmpty: (ctx, _) => {
-      return ctx.water_level <= 0 && ctx.laundry !== 0;
+      return ctx.water_level === 1 && ctx.laundry !== 0;
     },
     isLaundryLeft: (ctx, _) => {
       return (
@@ -56,50 +63,37 @@ const options = {
     isSoapEmpty: (ctx, _) => {
       return ctx.laundry_soap === "";
     },
+    hasReachTimeout: (ctx) => ctx.timer <= 0,
   },
   services: {
-    washingTimer: (ctx) => (send) => {
-      timeout = setTimeout(() => {
+    ticker: (ctx) => (send) => {
+      const sendTick = () => {
         send({
-          type: "WASHING_TIMEOUT",
+          type: "TICK",
         });
-      }, ctx.timer);
-      return () => {
-        clearTimeout(timeout);
       };
-    },
-    drainingTimer: (ctx) => (send) => {
-      timeout = setTimeout(() => {
-        send({
-          type: "DRAINING_TIMEOUT",
-        });
-      }, ctx.timer);
-      return () => {
-        clearTimeout(timeout);
+      const ticker = setInterval(sendTick, 1000);
+      const stopTicker = () => {
+        clearInterval(ticker);
       };
-    },
-    dryingTimer: (ctx) => (send) => {
-      timeout = setTimeout(() => {
-        send({
-          type: "DRYING_TIMEOUT",
-        });
-      }, ctx.timer);
-      return () => {
-        clearTimeout(timeout);
-      };
+      return stopTicker;
     },
   },
 };
-
 const fetchMachine = Machine(
   {
     id: "washing_machine_dryer",
     initial: "idle",
+
     context: {
       water_level: 0,
       laundry: 0,
       laundry_soap: "",
       timer: 5000,
+    },
+    invoke: {
+      id: "ticker",
+      src: "ticker",
     },
     states: {
       idle: {
@@ -121,8 +115,8 @@ const fetchMachine = Machine(
             actions: ["loadSoap"],
           },
           AUTOMATIC: {
-            target: "automatic",
             cond: "isThereWaterAndLaundry",
+            target: "automatic",
           },
           WASH: {
             cond: "isThereWaterAndLaundry",
@@ -131,7 +125,7 @@ const fetchMachine = Machine(
           },
           DRAIN: {
             cond: "isWaterNotEmpty",
-            actions: ["emptyWaterLvl"],
+            actions: ["emptyWaterLvl", "setTimeToDrain"],
             target: "draining",
           },
           DRY: {
@@ -147,72 +141,92 @@ const fetchMachine = Machine(
         },
       },
       automatic: {
-        initial: "washing",
+        id: "automatic",
+        initial: "auto_washing",
         states: {
-          washing: {
-            invoke: {
-              src: "washingTimer",
-            },
+          auto_washing: {
+            entry: ["setTimeToWash"],
             on: {
-              WASHING_TIMEOUT: {
-                target: "draining",
-              },
+              TICK: [
+                {
+                  cond: "hasReachTimeout",
+                  target: "auto_draining",
+                },
+                {
+                  actions: ["decrementTime"],
+                },
+              ],
             },
           },
-          draining: {
-            invoke: {
-              src: "drainingTimer",
-            },
+          auto_draining: {
+            entry: ["setTimeToDrain"],
             on: {
-              DRAINING_TIMEOUT: {
-                target: "drying",
-                actions: ["draining"],
-              },
+              TICK: [
+                {
+                  cond: "hasReachTimeout",
+                  target: "auto_drying",
+                },
+                {
+                  actions: ["draining", "decrementTime"],
+                },
+              ],
             },
           },
-          drying: {
-            invoke: {
-              src: "dryingTimer",
-            },
+          auto_drying: {
+            entry: ["setTimeToDry"],
             on: {
-              DRYING_TIMEOUT: {
-                target: "#idle",
-                actions: ["drying"],
-              },
+              TICK: [
+                {
+                  cond: "hasReachTimeout",
+                  target: "#idle",
+                },
+                {
+                  actions: ["drying", "decrementTime"],
+                },
+              ],
             },
           },
         },
       },
       washing: {
-        invoke: {
-          src: "washingTimer",
-        },
         on: {
-          WASHING_TIMEOUT: {
-            target: "#idle",
-          },
+          TICK: [
+            {
+              cond: "hasReachTimeout",
+              target: "#idle",
+            },
+            {
+              actions: ["decrementTime"],
+            },
+          ],
         },
       },
       draining: {
-        invoke: {
-          src: "drainingTimer",
-        },
+        id: "draining",
         on: {
-          DRAINING_TIMEOUT: {
-            target: "#idle",
-            actions: ["draining"],
-          },
+          TICK: [
+            {
+              cond: "hasReachTimeout",
+              target: "#idle",
+            },
+            {
+              actions: ["draining", "decrementTime"],
+            },
+          ],
         },
       },
       drying: {
-        invoke: {
-          src: "dryingTimer",
-        },
+        id: "drying",
         on: {
-          DRYING_TIMEOUT: {
-            target: "#idle",
-            actions: ["drying"],
-          },
+          TICK: [
+            {
+              cond: "hasReachTimeout",
+              target: "#idle",
+            },
+            {
+              actions: ["drying", "decrementTime"],
+            },
+          ],
         },
       },
     },

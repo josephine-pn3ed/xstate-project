@@ -14,9 +14,6 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   setTimeToWash: assign({
     timer: (ctx, _) => 10,
   }),
-  setTimeToZero: assign({
-    timer: (ctx, _) => 0,
-  }),
   setTimeToDry: assign({
     timer: (ctx, _) => 5,
   }),
@@ -36,9 +33,6 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   }),
   unloading: assign({
     laundry: (ctx, _) => 0,
-  }),
-  timerCountdown: assign({
-    timer: (ctx) => ((Math.floor(ctx.timer / 1000) % 60) - 1),
   }),
   setTime: assign({
     timer: (ctx) => 3,

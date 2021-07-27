@@ -1,18 +1,24 @@
 import { IWashingContext, IWashingEvent } from "../types";
 import { ConditionPredicate } from "xstate";
 
-const guards: Record<any, ConditionPredicate<IWashingContext, IWashingEvent>> = {
+const guards: Record<
+  any,
+  ConditionPredicate<IWashingContext, IWashingEvent>
+> = {
   isWaterEmpty: (ctx, _) => {
     return ctx.water_level === 0;
   },
   isWaterNotEmpty: (ctx, _) => {
     return ctx.water_level > 1;
   },
+  isThereWaterAndLaundryAndSoap: (ctx, _) => {
+    return ctx.water_level > 0 && ctx.laundry > 0 && ctx.laundry_soap !== "";
+  },
   isThereWaterAndLaundry: (ctx, _) => {
     return ctx.water_level > 0 && ctx.laundry > 0;
   },
   isWaterEmptyAndLaundryNotEmpty: (ctx, _) => {
-    return ctx.water_level <= 0 && ctx.laundry !== 0;
+    return ctx.water_level === 1 && ctx.laundry !== 0;
   },
   isLaundryLeft: (ctx, _) => {
     return (
@@ -25,7 +31,7 @@ const guards: Record<any, ConditionPredicate<IWashingContext, IWashingEvent>> = 
   isSoapEmpty: (ctx, _) => {
     return ctx.laundry_soap === "";
   },
-  hasReachTimeout: (ctx) => ctx.timer <= 0
+  hasReachTimeout: (ctx) => ctx.timer <= 0,
 };
 
 export default guards;

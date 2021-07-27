@@ -2,6 +2,7 @@ import {
   StateNodeDefinition,
   AnyEventObject,
   AnyStateNodeDefinition,
+  StateNodeConfig
 } from "xstate";
 
 export interface IWashingContext {
@@ -9,7 +10,6 @@ export interface IWashingContext {
   laundry: number;
   laundry_soap: string;
   timer: number;
-  convert_timer: number;
 }
 
 export type IWashingEvent =
@@ -23,9 +23,6 @@ export type IWashingEvent =
   | IWashEvent
   | IDoneEvent
   | ICancelEvent
-  | IWashingTimeoutEvent
-  | IDrainingTimeoutEvent
-  | IDryingTimeoutEvent
   | ITickEvent
 
 export interface ILoadWaterEvent extends AnyEventObject {
@@ -57,15 +54,6 @@ export interface IDoneEvent extends AnyEventObject {
 }
 export interface ICancelEvent extends AnyEventObject {
   type: "CANCEL";
-}
-export interface IWashingTimeoutEvent extends AnyEventObject {
-  type: "WASHING_TIMEOUT";
-}
-export interface IDrainingTimeoutEvent extends AnyEventObject {
-  type: "DRAINING_TIMEOUT";
-}
-export interface IDryingTimeoutEvent extends AnyEventObject {
-  type: "DRYING_TIMEOUT";
 }
 export interface ITickEvent extends AnyEventObject {
   type: "TICK";

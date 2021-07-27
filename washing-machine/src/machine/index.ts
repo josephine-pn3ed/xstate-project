@@ -3,20 +3,11 @@ import { options } from './options'
 import { createMachine } from "xstate";
 import { IWashingContext } from './types';
 
-
-// context: {
-//     water_level: 0,
-//     laundry: 0,
-//     laundry_soap: "",
-//     timer: 0,
-//     convert_timer:0
-//   },
 const default_context:IWashingContext = {
     water_level: 0,
     laundry: 0,
     laundry_soap: "",
     timer: 0,
-    convert_timer:0
 }
 
 

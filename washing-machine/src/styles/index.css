@@ -230,6 +230,46 @@
   background: hsla(214, 55%, 73%, 0.4);
   z-index: 1;
 }
+
+.ripple-four {
+  position: absolute;
+  top: 40%;
+  width: 525px;
+  height: 525px;
+  border-radius: 45%;
+  transform-origin: 50% 48%;
+  animation: water 5s infinite linear;
+  background: hsla(212, 64%, 72%, 0.7);
+  z-index: 3;
+  transform: translate3d(0, 0, 0);
+}
+
+.ripple-five {
+  position: absolute;
+  top: 40%;
+  width: 525px;
+  height: 525px;
+  border-radius: 45%;
+  transform-origin: 50% 48%;
+  animation: water 5s infinite linear;
+  background: hsla(212, 64%, 72%, 0.7);
+  z-index: 3;
+  transform: translate3d(0, 0, 0);
+}
+
+.ripple-six {
+  position: absolute;
+  top: 40%;
+  width: 525px;
+  height: 525px;
+  border-radius: 45%;
+  transform-origin: 50% 48%;
+  animation: water 5s infinite linear;
+  background: hsla(212, 64%, 72%, 0.7);
+  z-index: 3;
+  transform: translate3d(0, 0, 0);
+}
+
 .soap-one {
   transform-origin: 132% 94%;
   animation: soap 5s ease-in-out infinite alternate;

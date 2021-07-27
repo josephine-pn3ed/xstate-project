@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useMachine } from "@xstate/react";
 import { Grid, Container, Button } from "@material-ui/core";
 import { WashingMachine } from "./components/WashingMachine";
@@ -19,8 +19,16 @@ const App: React.FC = () => {
     localStorage.setItem("drained", "laundryHasBeenDrained");
   }
 
-  console.log(state.context.timer, state, "timer");
-  console.log(val, "value");
+  const loadWater = () => send("LOAD_WATER");
+  const loadSoap = () => send("LOAD_SOAP");
+  const loadLaundry = () => send("LOAD_LAUNDRY");
+  const wash = () => send("WASH");
+  const drain = () => send("DRAIN");
+  const dry = () => send("DRY") && localStorage.removeItem("drained");
+  const automatic = () => send("AUTOMATIC");
+  const unload = () => send("UNLOAD");
+
+  console.log(value, state.context, "timer");
 
   return (
     <div className="App-header">
@@ -31,7 +39,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("LOAD_WATER")}
+              onClick={loadWater}
               disabled={context.water_level > 1 || !state.matches("idle")}
             >
               LOAD WATER
@@ -41,7 +49,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("LOAD_SOAP")}
+              onClick={loadSoap}
               disabled={context.laundry_soap !== "" || !state.matches("idle")}
             >
               LOAD SOAP
@@ -51,7 +59,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("LOAD_LAUNDRY")}
+              onClick={loadLaundry}
               disabled={context.laundry !== 0 || !state.matches("idle")}
             >
               LOAD LAUNDRY
@@ -61,7 +69,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("WASH")}
+              onClick={wash}
               disabled={
                 (context.water_level <= 0 && context.laundry <= 0) ||
                 context.water_level <= 0 ||
@@ -76,7 +84,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("DRAIN")}
+              onClick={drain}
               disabled={
                 (context.water_level <= 1 && context.laundry_soap === "") ||
                 !state.matches("idle")
@@ -89,7 +97,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("DRY") && localStorage.removeItem("drained")}
+              onClick={dry}
               disabled={
                 !localStorage.getItem("drained") ||
                 !state.matches("idle") ||
@@ -103,7 +111,7 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("AUTOMATIC")}
+              onClick={automatic}
               disabled={
                 (context.water_level <= 0 && context.laundry <= 0) ||
                 context.water_level <= 0 ||
@@ -118,10 +126,11 @@ const App: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              onClick={() => send("UNLOAD")}
+              onClick={unload}
               disabled={
-                context.water_level > 0 ||
-                context.laundry <= 0 ||
+                (!context.water_level &&
+                  !context.laundry &&
+                  !context.laundry_soap) ||
                 !state.matches("idle")
               }
             >

@@ -1,6 +1,7 @@
 import { StateValue } from "xstate";
 import { IWashingContext } from "../machine/types";
 import "../styles/index.css";
+
 interface Props {
   value: StateValue;
   context: IWashingContext;
@@ -8,8 +9,7 @@ interface Props {
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
-  console.log(context.timer,"timeeeeeeeeeer");
-  
+
   return (
     <>
       <div className="box-canvas">
@@ -23,10 +23,32 @@ export const WashingMachine = (props: Props) => {
               }`}
             >
               <div className="water">
-                <div className={context.water_level ? "ripple-one" : ""}></div>
-                <div className={context.water_level ? "ripple-two" : ""}></div>
                 <div
-                  className={context.water_level ? "ripple-three" : ""}
+                  className={
+                    context.water_level > 1
+                      ? "ripple-one"
+                      : context.water_level === 1
+                      ? "ripple-four"
+                      : ""
+                  }
+                ></div>
+                <div
+                  className={
+                    context.water_level > 1
+                      ? "ripple-two"
+                      : context.water_level === 1
+                      ? "ripple-five"
+                      : ""
+                  }
+                ></div>
+                <div
+                  className={
+                    context.water_level > 1
+                      ? "ripple-three"
+                      : context.water_level === 1
+                      ? "ripple-six"
+                      : ""
+                  }
                 ></div>
               </div>
               <div>
@@ -37,7 +59,7 @@ export const WashingMachine = (props: Props) => {
                   className={context.laundry_soap ? "soap soap-two" : ""}
                 ></div>
                 <div
-                  className={context.laundry_soap ? " soap soap-three" : ""}
+                  className={context.laundry_soap ? "soap soap-three" : ""}
                 ></div>
                 <div
                   className={context.laundry_soap ? "soap soap-four" : ""}

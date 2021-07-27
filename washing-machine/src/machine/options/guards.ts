@@ -12,7 +12,7 @@ const guards: Record<any, ConditionPredicate<IWashingContext, IWashingEvent>> = 
     return ctx.water_level > 0 && ctx.laundry > 0;
   },
   isWaterEmptyAndLaundryNotEmpty: (ctx, _) => {
-    return ctx.water_level <= 0 && ctx.laundry !== 0;
+    return ctx.water_level === 1 && ctx.laundry !== 0;
   },
   isLaundryLeft: (ctx, _) => {
     return (

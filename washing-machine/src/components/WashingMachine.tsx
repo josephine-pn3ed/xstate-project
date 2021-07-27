@@ -8,8 +8,8 @@ interface Props {
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
-  console.log(context.timer,"timeeeeeeeeeer");
-  
+  console.log(context.timer, "timeeeeeeeeeer");
+
   return (
     <>
       <div className="box-canvas">
@@ -19,7 +19,14 @@ export const WashingMachine = (props: Props) => {
           <div className="door">
             <div
               className={`drum ${
-                value === "washing" || value === "drying" ? "isWashing" : ""
+                value === "washing" ||
+                value === "drying" ||
+                value === "draining" ||
+                value === "auto_washing" ||
+                value === "auto_draining" ||
+                value === "auto_drying"
+                  ? "isWashing"
+                  : ""
               }`}
             >
               <div className="water">

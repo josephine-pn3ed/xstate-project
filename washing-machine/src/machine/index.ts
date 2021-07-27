@@ -8,7 +8,6 @@ const default_context:IWashingContext = {
     laundry: 0,
     laundry_soap: "",
     timer: 0,
-    convert_timer:0
 }
 
 

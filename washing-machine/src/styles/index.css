@@ -48,7 +48,7 @@
 /* Powder drawer */
 .drawer {
   position: absolute;
-  color: black;
+  color: #f30404;
   text-align: center;
   top: 10px;
   left: 10px;
@@ -56,7 +56,7 @@
   height: 50px;
   border: 2px solid var(--machine-feature-gray);
   border-radius: 0 0 20% 0;
-  font-size: 16px;
+  font-size: 23px;
   background-color: #8080808c;
 }
 
@@ -75,25 +75,25 @@
 /* Small LED display */
 .panel {
   position: absolute;
-  width: 88px;
+  width: 122px;
   height: 24px;
   background: #0a0a0a;
-  left: 193px;
-  top: 30px;
+  left: 173px;
+  top: 18px;
   border-radius: 4px;
   color: #4d9900;
   font-weight: 500;
   font-size: 16px;
   text-align: center;
-  padding-top: 6px;
+  padding-top: 14px;
 }
 
 /* Machine dial */
 .panel::after {
   content: "";
   position: absolute;
-  left: -61px;
-  top: -10px;
+  left: -47px;
+  top: 0px;
   width: 35px;
   height: 35px;
   border: 2px solid var(--machine-feature-gray);

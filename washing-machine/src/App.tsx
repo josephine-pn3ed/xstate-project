@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { useMachine } from "@xstate/react";
 import { Grid, Container, Button } from "@material-ui/core";
 import { WashingMachine } from "./components/WashingMachine";
@@ -13,7 +13,8 @@ const App: React.FC = () => {
 
   let val: StateValue = typeof value === "string" ? value : value.automatic;
 
-  const isNotIdle: boolean = val !== "idle" ? true : false;
+
+  // const isNotIdle: boolean = val !== "idle" ? true : false;
 
   if (val === "draining" && typeof value === "string") {
     localStorage.setItem("drained", "laundryHasBeenDrained");
@@ -63,8 +64,8 @@ const App: React.FC = () => {
               variant="contained"
               onClick={() => send("WASH")}
               disabled={
-                (context.water_level <= 0 && context.laundry <= 0) ||
-                context.water_level <= 0 ||
+                (context.water_level <= 1 && context.laundry <= 0) ||
+                context.water_level <= 1 ||
                 context.laundry <= 0 ||
                 !state.matches("idle")
               }

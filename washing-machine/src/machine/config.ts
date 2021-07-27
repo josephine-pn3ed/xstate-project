@@ -1,123 +1,143 @@
-import { createMachine } from "xstate";
-import options from "./options";
-import { WashingEvent, WashingContext, WashingState } from "./types";
-
-const washingMachineDryer = createMachine<
-  WashingContext,
-  WashingEvent,
-  WashingState
->(
-  {
-    id: "washing_machine_dryer",
-    initial: "idle",
-    context: {
-      water_level: 0,
-      laundry: 0,
-      laundry_soap: "",
-      timer: 0,
+import { MachineConfig } from "xstate";
+import { IWashingEvent, IWashingContext, IMachineSchema } from "./types";
+export const config: MachineConfig<IWashingContext, IMachineSchema, IWashingEvent> = {
+  id: "washing_machine_dryer",
+  initial: "idle",
+  invoke: {
+    id: 'ticker',
+    src: 'ticker'
+  },
+  states: {
+    idle: {
+      entry: [],
+      id: "idle",
+      on: {
+        LOAD_WATER: {
+          cond: "isWaterEmpty",
+          actions: ["loadWater"],
+          target: "idle",
+        },
+        LOAD_LAUNDRY: {
+          cond: "isLaundryEmpty",
+          actions: ["loadLaundry"],
+          target: "idle",
+        },
+        LOAD_SOAP: {
+          cond: "isSoapEmpty",
+          target: "idle",
+          actions: ["loadSoap"],
+        },
+        AUTOMATIC: {
+          cond: "isThereWaterAndLaundry",
+          actions: ["setTimeToWash", "setTimeToDrain", "setTimeToDry"],
+          target: "automatic",
+        },
+        WASH: {
+          cond: "isThereWaterAndLaundry",
+          actions: ["setTimeToWash"],
+          target: "washing",
+        },
+        DRAIN: {
+          cond: "isWaterNotEmpty",
+          actions: ["emptyWaterLvl", "setTimeToDrain"],
+          target: "draining",
+        },
+        DRY: {
+          cond: "isWaterEmptyAndLaundryNotEmpty",
+          actions: ["setTimeToDry"],
+          target: "drying",
+        },
+        UNLOAD: {
+          cond: "isLaundryLeft",
+          actions: ["unloading"],
+          target: "#idle",
+        },
+      },
     },
-    states: {
-      idle: {
-        on: {
-          LOAD_WATER: {
-            cond: "isWaterEmpty",
-            actions: ["loadWater"],
-            target: "idle",
-          },
-          LOAD_LAUNDRY: {
-            cond: "isLaundryEmpty",
-            actions: ["loadLaundry"],
-            target: "idle",
-          },
-          LOAD_SOAP: {
-            cond: "isSoapEmpty",
-            target: "idle",
-            actions: ["loadSoap"],
-          },
-          WASH: {
-            cond: "isThereWaterAndLaundry",
-            actions: ["setTimeToWash"],
-            target: "washing",
-          },
-          DRAIN: {
-            cond: "isWaterNotEmpty",
-            actions: ["emptyWaterLvl"],
-            target: "draining",
-          },
-          DRY: {
-            cond: "isWaterEmptyAndLaundryNotEmpty",
-            actions: ["setTimeToDry"],
-            target: "drying",
-          },
-          UNLOAD: {
-            cond: "isLaundryLeft",
-            actions:["unloading"],
-            target: "unloading",
-          },
-        },
-      },
-      washing: {
-        invoke: {
-          src: "washingTimer",
-        },
-        on: {
-          WashingTimeout: {
-            target: "idle",
-            actions: ["setTimeToZero"]
-          },
-        },
-      },
-      draining: {
-        invoke: {
-          src: "drainingTimer",
-        },
-        on: {
-          DrainingTimeout: {
-            target: "idle",
-            actions: ["draining", "setTimeToZero"],
-          },
-        },
-      },
-      drying: {
-        invoke: {
-          src: "dryingTimer",
-        },
-        on: {
-          DryingTimeout: {
-            target: "idle",
-            actions: ["drying", "setTimeToZero"],
-          },
-        },
-      },
-      // waiting: {
-      //   initial: "check_powder",
-      //   states: {
-      //     check_powder: {
-      //       after: {
-      //         1000: "check_water"
-      //       }
+    automatic: {
+      id:"automatic",
+      // ! TODO Tom
+      // @ts-ignore
+      // initial:"auto_washing",
+       states: {
+      //   auto_washing: {
+      //     invoke: {
+      //       src: "washingTimer",
       //     },
-      //     check_water: {
-      //       after: {
-      //         2000: "washing"
-      //       }
-      //     }
-      //   }
+      //     on: {
+      //       WASHING_TIMEOUT: {
+      //         target: "draining",
+      //         // actions: ["setTimeToZero"]
+      //       },
+      //     },
+      //   },
+      //   auto_draining: {
+      //     invoke: {
+      //       src: "drainingTimer",
+      //     },
+      //     on: {
+      //       DRAINING_TIMEOUT: {
+      //         target: "drying",
+      //         actions: ["draining"], //"setTimeToZero"
+      //       },
+      //     },
+      //   },
+      //   auto_drying: {
+      //     invoke: {
+      //       src: "dryingTimer",
+      //     },
+      //     on: {
+      //       DRYING_TIMEOUT: {
+      //         target: "#idle",
+      //         actions: ["drying"], //"setTimeToZero"
+      //       },
+      //     },
+      //   },
+      },
+    },
+    washing: {
+      // invoke: {
+      //   src: "washingTimer",
       // },
-      unloading: {
-        on: {
-          DONE: {
-            target: "done",
-            actions: ["unloading"],
+      on: {
+        WASHING_TIMEOUT: {
+          actions: ["timerCountdown"],
+           target: "#idle",
+        },
+        TICK: [
+          {
+            cond: 'hasReachTimeout',
+            target: "#idle",
           },
+          {
+            actions: ['decrementTime']
+          }
+        ]
+      },
+    },
+    draining: {
+      invoke: {
+        src: "drainingTimer",
+      },
+      on: {
+        DRAINING_TIMEOUT: {
+          actions: ["draining", "setTimeToZero", "timerCountdown"],
+          target: "#idle",
         },
       },
-      done:{
-        type:"final"
-      }
+    },
+    drying: {
+      invoke: {
+        src: "dryingTimer",
+      },
+      on: {
+        DRYING_TIMEOUT: {
+          actions: ["drying", "setTimeToZero", "timerCountdown"],
+          target: "#idle",
+        },
+      },
     },
   },
-  options
-);
+};
 
-export default washingMachineDryer;
+export default config;

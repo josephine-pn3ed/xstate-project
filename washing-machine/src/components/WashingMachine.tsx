@@ -8,7 +8,6 @@ interface Props {
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
-  console.log(context.timer, "timeeeeeeeeeer");
 
   return (
     <>

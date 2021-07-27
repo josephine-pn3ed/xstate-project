@@ -1,7 +1,7 @@
-import { WashingContext, WashingEvent } from "../../types";
+import { IWashingContext, IWashingEvent } from "../../types";
 import { assign, ActionFunctionMap } from "xstate";
 
-const actions: ActionFunctionMap<WashingContext, WashingEvent> = {
+const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   loadWater: assign({
     water_level: (ctx, _) => 8,
   }),
@@ -12,13 +12,20 @@ const actions: ActionFunctionMap<WashingContext, WashingEvent> = {
     laundry: (ctx, _) => 10,
   }),
   setTimeToWash: assign({
+    timer: (ctx, _) => 10000,
+  }),
+  setTimeToZero: assign({
+    timer: (ctx, _) => 0,
+  }),
+  setTimeToDry: assign({
+    timer: (ctx, _) => 5000,
+  }),
+
+  setTimeToDrain: assign({
     timer: (ctx, _) => 5000,
   }),
   emptyWaterLvl: assign({
     water_level: (ctx, _) => 1,
-  }),
-  setTimeToDry: assign({
-    timer: (ctx, _) => 5000,
   }),
   draining: assign({
     water_level: (ctx, _) => 1,
@@ -31,7 +38,7 @@ const actions: ActionFunctionMap<WashingContext, WashingEvent> = {
     laundry: (ctx, _) => 0,
   }),
   timerCountdown: assign({
-    timer: (ctx) => (ctx.timer - 1),
+    timer: (ctx) => ((Math.floor(ctx.timer / 1000) % 60) - 1),
   }),
   setTime: assign({
     timer: (ctx) => 3,

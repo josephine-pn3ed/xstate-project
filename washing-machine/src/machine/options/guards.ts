@@ -25,7 +25,7 @@ const guards: Record<any, ConditionPredicate<IWashingContext, IWashingEvent>> = 
   isSoapEmpty: (ctx, _) => {
     return ctx.laundry_soap === "";
   },
-  
+  hasReachTimeout: (ctx) => ctx.timer <= 0
 };
 
 export default guards;

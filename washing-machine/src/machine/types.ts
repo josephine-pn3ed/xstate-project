@@ -1,96 +1,90 @@
-import { StateNodeConfig } from "xstate";
+import {
+  StateNodeDefinition,
+  AnyEventObject,
+  AnyStateNodeDefinition,
+} from "xstate";
 
 export interface IWashingContext {
   water_level: number;
   laundry: number;
   laundry_soap: string;
   timer: number;
-  convert_timer:number;
+  convert_timer: number;
 }
-
 
 export type IWashingEvent =
-  |IAutomatic
-  |ILoadWater
-  |ILoadSoap
-  |ILoadLaundry
-  |IDrain
-  |IDry
-  |IUnload
-  |IWash
-  |IDone
-  |ICancel
-  |IWashingTimeout
-  |IDrainingTimeout
-  |IDryingTimeout
-  |ITick;
+  | IAutomaticEvent
+  | ILoadWaterEvent
+  | ILoadSoapEvent
+  | ILoadLaundryEvent
+  | IDrainEvent
+  | IDryEvent
+  | IUnloadEvent
+  | IWashEvent
+  | IDoneEvent
+  | ICancelEvent
+  | IWashingTimeoutEvent
+  | IDrainingTimeoutEvent
+  | IDryingTimeoutEvent
+  | ITickEvent
 
-  export interface ILoadWater{
-    type:"LOAD_WATER"
-  }
-  export interface ILoadSoap{
-    type:"LOAD_SOAP"
-  }
-  export interface ILoadLaundry{
-    type:"LOAD_LAUNDRY"
-  }
-  export interface IDrain{
-    type:"DRAIN"
-  }
-  export interface IDry{
-    type:"DRY"
-  }
-  export interface IAutomatic{
-    type:"AUTOMATIC"
-  }
-  export interface IUnload{
-    type:"UNLOAD"
-  }
-  export interface IWash{
-    type:"WASH"
-  }
-  export interface IDone{
-    type:"DONE"
-  }
-  export interface ICancel{
-    type:"CANCEL"
-  }
-  export interface IWashingTimeout{
-    type:"WASHING_TIMEOUT"
-  }
-  export interface IDrainingTimeout{
-    type:"DRAINING_TIMEOUT"
-  }
-  export interface IDryingTimeout{
-    type:"DRYING_TIMEOUT"
-  }
-  export interface ITick{
-    type:"TICK"
-  }
-  
-// export type WashingState =
-//   | { value: "idle"; context: IWashingContext }
-//   | { value: "loading"; context: IWashingContext }
-//   | { value: "washing"; context: IWashingContext }
-//   | { value: "draining"; context: IWashingContext }
-//   | { value: "drying"; context: IWashingContext }
-//   | { value: "unloading"; context: IWashingContext }
-//   | { value: "done"; context: IWashingContext }
-//   | { value: "automatic"; context: IWashingContext };
-export interface IAutomatic{
-  states:{
-    auto_washing: StateNodeConfig<IWashingContext , any , any >,
-    auto_draining: StateNodeConfig<IWashingContext , any , any >,
-    auto_drying: StateNodeConfig<IWashingContext , any , any >,
-  }
+export interface ILoadWaterEvent extends AnyEventObject {
+  type: "LOAD_WATER";
+}
+export interface ILoadSoapEvent extends AnyEventObject {
+  type: "LOAD_SOAP";
+}
+export interface ILoadLaundryEvent extends AnyEventObject {
+  type: "LOAD_LAUNDRY";
+}
+export interface IDrainEvent extends AnyEventObject {
+  type: "DRAIN";
+}
+export interface IDryEvent extends AnyEventObject {
+  type: "DRY";
+}
+export interface IAutomaticEvent extends AnyEventObject {
+  type: "AUTOMATIC";
+}
+export interface IUnloadEvent extends AnyEventObject {
+  type: "UNLOAD";
+}
+export interface IWashEvent extends AnyEventObject {
+  type: "WASH";
+}
+export interface IDoneEvent extends AnyEventObject {
+  type: "DONE";
+}
+export interface ICancelEvent extends AnyEventObject {
+  type: "CANCEL";
+}
+export interface IWashingTimeoutEvent extends AnyEventObject {
+  type: "WASHING_TIMEOUT";
+}
+export interface IDrainingTimeoutEvent extends AnyEventObject {
+  type: "DRAINING_TIMEOUT";
+}
+export interface IDryingTimeoutEvent extends AnyEventObject {
+  type: "DRYING_TIMEOUT";
+}
+export interface ITickEvent extends AnyEventObject {
+  type: "TICK";
 }
 
-export interface ISchema {
+export interface IAutomaticSchema extends AnyStateNodeDefinition {
   states: {
-    idle: StateNodeConfig<IWashingContext , any , any >,
-    automatic: StateNodeConfig<IWashingContext , IAutomatic , any >,
-    washing: StateNodeConfig<IWashingContext , any , any >,
-    draining: StateNodeConfig<IWashingContext , any , any >,
-    drying: StateNodeConfig<IWashingContext , any , any >,
-  }
-}  
+    auto_washing: StateNodeDefinition<IWashingContext, any, any>;
+    auto_draining: StateNodeDefinition<IWashingContext, any, any>;
+    auto_drying: StateNodeDefinition<IWashingContext, any, any>;
+  };
+}
+
+export interface IMachineSchema extends AnyStateNodeDefinition {
+  states: {
+    idle: StateNodeDefinition<IWashingContext, any, any>;
+    automatic: StateNodeDefinition<IWashingContext, IAutomaticSchema, any>;
+    washing: StateNodeDefinition<IWashingContext, any, any>;
+    draining: StateNodeDefinition<IWashingContext, any, any>;
+    drying: StateNodeDefinition<IWashingContext, any, any>;
+  };
+}

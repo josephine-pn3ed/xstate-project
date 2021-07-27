@@ -7,37 +7,21 @@ import { spawnMachine } from "./machine";
 import { StateValue } from "xstate";
 
 const App: React.FC = () => {
-  const [state, send] = useMachine(spawnMachine({
-  }));
+  const [state, send] = useMachine(spawnMachine({}));
+
   const { context, value } = state;
-  // const [isNotIdle , setIsNoteIdle] = useState(false)
-
-  // useEffect(() => {
-  //   if(!state.matches('idle')){
-  //     console.log('HALO')
-  //     // localStorage.setItem("drained", "laundryHasBeenDrained");
-  //     setIsNoteIdle(true)
-  //   }else{
-  //     setIsNoteIdle(false)
-  //   }
-  // } , [value])
-
-  // if(state.matches('automatic.draining')){
-  //   console.log('HALO')
-  //   // localStorage.setItem("drained", "laundryHasBeenDrained");
-
-  // }
 
   let val: StateValue = typeof value === "string" ? value : value.automatic;
+
   const isNotIdle: boolean = val !== "idle" ? true : false;
+
   if (val === "draining" && typeof value === "string") {
     localStorage.setItem("drained", "laundryHasBeenDrained");
   }
-  console.log(state.context.timer, state,"timer");
-  console.log(val, "value");
-  
 
-  // console.log(state.context, state.value, localStorage.getItem("drained"));
+  console.log(state.context.timer, state, "timer");
+  console.log(val, "value");
+
   return (
     <div className="App-header">
       <Container maxWidth="sm">
@@ -48,7 +32,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={() => send("LOAD_WATER")}
-              disabled={!state.matches('idle')}
+              disabled={context.water_level > 1 || !state.matches("idle")}
             >
               LOAD WATER
             </Button>
@@ -58,7 +42,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={() => send("LOAD_SOAP")}
-              disabled={!state.matches('idle') || context.water_level <= 0}
+              disabled={context.laundry_soap !== "" || !state.matches("idle")}
             >
               LOAD SOAP
             </Button>
@@ -68,7 +52,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={() => send("LOAD_LAUNDRY")}
-              disabled={!state.matches('idle')}
+              disabled={context.laundry !== 0 || !state.matches("idle")}
             >
               LOAD LAUNDRY
             </Button>
@@ -82,7 +66,7 @@ const App: React.FC = () => {
                 (context.water_level <= 0 && context.laundry <= 0) ||
                 context.water_level <= 0 ||
                 context.laundry <= 0 ||
-                !state.matches('idle')
+                !state.matches("idle")
               }
             >
               WASH
@@ -95,7 +79,7 @@ const App: React.FC = () => {
               onClick={() => send("DRAIN")}
               disabled={
                 (context.water_level <= 1 && context.laundry_soap === "") ||
-                !state.matches('idle')
+                !state.matches("idle")
               }
             >
               DRAIN
@@ -108,8 +92,8 @@ const App: React.FC = () => {
               onClick={() => send("DRY") && localStorage.removeItem("drained")}
               disabled={
                 !localStorage.getItem("drained") ||
-                !state.matches('idle') ||
-                (context.laundry <= 0 && context.water_level <= 0)
+                !state.matches("idle") ||
+                context.water_level !== 1
               }
             >
               DRY
@@ -124,7 +108,7 @@ const App: React.FC = () => {
                 (context.water_level <= 0 && context.laundry <= 0) ||
                 context.water_level <= 0 ||
                 context.laundry <= 0 ||
-                !state.matches('idle')
+                !state.matches("idle")
               }
             >
               AUTOMATIC
@@ -136,19 +120,15 @@ const App: React.FC = () => {
               variant="contained"
               onClick={() => send("UNLOAD")}
               disabled={
-                context.water_level > 0 || context.laundry <= 0 || !state.matches('idle')
+                context.water_level > 0 ||
+                context.laundry <= 0 ||
+                !state.matches("idle")
               }
             >
               UNLOAD
             </Button>
           </Grid>
-          {/* <Grid item xs={3}>
-            <Button fullWidth variant="contained" onClick={() => send("DONE")}>
-              DONE
-            </Button>
-          </Grid> */}
         </Grid>
-        {/* )} */}
       </Container>
     </div>
   );

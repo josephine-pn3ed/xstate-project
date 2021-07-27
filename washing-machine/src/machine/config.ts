@@ -1,11 +1,16 @@
 import { MachineConfig } from "xstate";
 import { IWashingEvent, IWashingContext, IMachineSchema } from "./types";
-export const config: MachineConfig<IWashingContext, IMachineSchema, IWashingEvent> = {
+
+export const config: MachineConfig<
+  IWashingContext,
+  IMachineSchema,
+  IWashingEvent
+> = {
   id: "washing_machine_dryer",
   initial: "idle",
   invoke: {
-    id: 'ticker',
-    src: 'ticker'
+    id: "ticker",
+    src: "ticker",
   },
   states: {
     idle: {
@@ -55,86 +60,95 @@ export const config: MachineConfig<IWashingContext, IMachineSchema, IWashingEven
       },
     },
     automatic: {
-      id:"automatic",
+      id: "automatic",
       // ! TODO Tom
       // @ts-ignore
       // initial:"auto_washing",
-       states: {
-      //   auto_washing: {
-      //     invoke: {
-      //       src: "washingTimer",
-      //     },
-      //     on: {
-      //       WASHING_TIMEOUT: {
-      //         target: "draining",
-      //         // actions: ["setTimeToZero"]
-      //       },
-      //     },
-      //   },
-      //   auto_draining: {
-      //     invoke: {
-      //       src: "drainingTimer",
-      //     },
-      //     on: {
-      //       DRAINING_TIMEOUT: {
-      //         target: "drying",
-      //         actions: ["draining"], //"setTimeToZero"
-      //       },
-      //     },
-      //   },
-      //   auto_drying: {
-      //     invoke: {
-      //       src: "dryingTimer",
-      //     },
-      //     on: {
-      //       DRYING_TIMEOUT: {
-      //         target: "#idle",
-      //         actions: ["drying"], //"setTimeToZero"
-      //       },
-      //     },
-      //   },
+      states: {
+        //   auto_washing: {
+        //     invoke: {
+        //       src: "washingTimer",
+        //     },
+        //     on: {
+        //       WASHING_TIMEOUT: {
+        //         target: "draining",
+        //         // actions: ["setTimeToZero"]
+        //       },
+        //     },
+        //   },
+        //   auto_draining: {
+        //     invoke: {
+        //       src: "drainingTimer",
+        //     },
+        //     on: {
+        //       DRAINING_TIMEOUT: {
+        //         target: "drying",
+        //         actions: ["draining"], //"setTimeToZero"
+        //       },
+        //     },
+        //   },
+        //   auto_drying: {
+        //     invoke: {
+        //       src: "dryingTimer",
+        //     },
+        //     on: {
+        //       DRYING_TIMEOUT: {
+        //         target: "#idle",
+        //         actions: ["drying"], //"setTimeToZero"
+        //       },
+        //     },
+        //   },
       },
     },
     washing: {
-      // invoke: {
-      //   src: "washingTimer",
-      // },
       on: {
         WASHING_TIMEOUT: {
           actions: ["timerCountdown"],
-           target: "#idle",
+          target: "#idle",
         },
         TICK: [
           {
-            cond: 'hasReachTimeout',
+            cond: "hasReachTimeout",
             target: "#idle",
           },
           {
-            actions: ['decrementTime']
-          }
-        ]
+            actions: ["decrementTime"],
+          },
+        ],
       },
     },
     draining: {
-      invoke: {
-        src: "drainingTimer",
-      },
       on: {
         DRAINING_TIMEOUT: {
-          actions: ["draining", "setTimeToZero", "timerCountdown"],
+          actions: ["draining", "timerCountdown"],
           target: "#idle",
         },
+        TICK: [
+          {
+            cond: "hasReachTimeout",
+            target: "#idle",
+          },
+          {
+            actions: ["decrementTime"],
+          },
+        ],
       },
     },
     drying: {
-      invoke: {
-        src: "dryingTimer",
-      },
       on: {
         DRYING_TIMEOUT: {
-          actions: ["drying", "setTimeToZero", "timerCountdown"],
+          actions: ["drying", "timerCountdown"],
           target: "#idle",
         },
+        TICK: [
+          {
+            cond: "hasReachTimeout",
+            target: "#idle",
+          },
+          {
+            actions: ["decrementTime"],
+          },
+        ],
       },
     },
   },

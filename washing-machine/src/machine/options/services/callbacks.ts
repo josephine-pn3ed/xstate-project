@@ -14,7 +14,10 @@ const services: Record<any, ServiceConfig<IWashingContext, IWashingEvent>> = {
 
   ticker: (ctx: IWashingContext, evt: IWashingEvent) => (send) => {
     const sendTick = () => {
-      console.log("KO")      
+      console.log("KO")
+      send({
+        type: 'TICK'
+      })      
     }
     const ticker = setInterval(sendTick,1000)
     const stopTicker = () => {

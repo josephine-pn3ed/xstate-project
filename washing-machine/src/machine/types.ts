@@ -1,4 +1,4 @@
-import { StateNodeConfig } from "xstate";
+import { StateNodeDefinition, AnyEventObject, AnyStateNodeDefinition } from "xstate";
 
 export interface IWashingContext {
   water_level: number;
@@ -10,8 +10,8 @@ export interface IWashingContext {
 
 
 export type IWashingEvent =
-  |IAutomatic
-  |ILoadWater
+  |IAutomaticEvent
+  |ILoadWaterEvent
   |ILoadSoap
   |ILoadLaundry
   |IDrain
@@ -25,10 +25,10 @@ export type IWashingEvent =
   |IDryingTimeout
   |ITick;
 
-  export interface ILoadWater{
+  export interface ILoadWaterEvent extends AnyEventObject{
     type:"LOAD_WATER"
   }
-  export interface ILoadSoap{
+  export interface ILoadSoap extends AnyEventObject{
     type:"LOAD_SOAP"
   }
   export interface ILoadLaundry{
@@ -40,7 +40,7 @@ export type IWashingEvent =
   export interface IDry{
     type:"DRY"
   }
-  export interface IAutomatic{
+  export interface IAutomaticEvent extends AnyEventObject{
     type:"AUTOMATIC"
   }
   export interface IUnload{
@@ -77,20 +77,20 @@ export type IWashingEvent =
 //   | { value: "unloading"; context: IWashingContext }
 //   | { value: "done"; context: IWashingContext }
 //   | { value: "automatic"; context: IWashingContext };
-export interface IAutomatic{
+export interface IAutomaticSchema extends AnyStateNodeDefinition{
   states:{
-    auto_washing: StateNodeConfig<IWashingContext , any , any >,
-    auto_draining: StateNodeConfig<IWashingContext , any , any >,
-    auto_drying: StateNodeConfig<IWashingContext , any , any >,
+    auto_washing: StateNodeDefinition<IWashingContext , any , any >,
+    auto_draining: StateNodeDefinition<IWashingContext , any , any >,
+    auto_drying: StateNodeDefinition<IWashingContext , any , any >,
   }
 }
 
-export interface ISchema {
+export interface IMachineSchema extends AnyStateNodeDefinition {
   states: {
-    idle: StateNodeConfig<IWashingContext , any , any >,
-    automatic: StateNodeConfig<IWashingContext , IAutomatic , any >,
-    washing: StateNodeConfig<IWashingContext , any , any >,
-    draining: StateNodeConfig<IWashingContext , any , any >,
-    drying: StateNodeConfig<IWashingContext , any , any >,
+    idle: StateNodeDefinition<IWashingContext , any , any >,
+    automatic: StateNodeDefinition<IWashingContext , IAutomaticSchema , any >,
+    washing: StateNodeDefinition<IWashingContext , any , any >,
+    draining: StateNodeDefinition<IWashingContext , any , any >,
+    drying: StateNodeDefinition<IWashingContext , any , any >,
   }
 }  

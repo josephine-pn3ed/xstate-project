@@ -1,8 +1,12 @@
 import { MachineConfig } from "xstate";
-import { IWashingEvent, IWashingContext, ISchema } from "./types";
-export const config: MachineConfig<IWashingContext, ISchema, IWashingEvent> = {
+import { IWashingEvent, IWashingContext, IMachineSchema } from "./types";
+export const config: MachineConfig<IWashingContext, IMachineSchema, IWashingEvent> = {
   id: "washing_machine_dryer",
   initial: "idle",
+  invoke: {
+    id: 'ticker',
+    src: 'ticker'
+  },
   states: {
     idle: {
       entry: [],
@@ -92,14 +96,23 @@ export const config: MachineConfig<IWashingContext, ISchema, IWashingEvent> = {
       },
     },
     washing: {
-      invoke: {
-        src: "washingTimer",
-      },
+      // invoke: {
+      //   src: "washingTimer",
+      // },
       on: {
         WASHING_TIMEOUT: {
           actions: ["timerCountdown"],
            target: "#idle",
         },
+        TICK: [
+          {
+            cond: 'hasReachTimeout',
+            target: "#idle",
+          },
+          {
+            actions: ['decrementTime']
+          }
+        ]
       },
     },
     draining: {

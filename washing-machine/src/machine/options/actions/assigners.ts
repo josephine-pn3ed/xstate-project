@@ -3,45 +3,45 @@ import { assign, ActionFunctionMap } from "xstate";
 
 const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   loadWater: assign({
-    water_level: (ctx) => 8,
+    water_level: (_) => 8,
   }),
   loadSoap: assign({
-    laundry_soap: (ctx) => "Calla",
+    laundry_soap: (_) => "Calla",
   }),
   loadLaundry: assign({
-    laundry: (ctx) => 10,
+    laundry: (_) => 10,
   }),
   setTimeToWash: assign({
-    timer: (ctx) => 10,
+    timer: (_) => 10,
   }),
   setTimeToDry: assign({
-    timer: (ctx) => 5,
+    timer: (_) => 5,
   }),
   setTimeToDrain: assign({
-    timer: (ctx) => 5,
+    timer: (_) => 5,
   }),
   setTimeToLoadWater: assign({
-    timer: (ctx) => 3,
+    timer: (_) => 3,
   }),
   emptyWaterLvl: assign({
-    water_level: (ctx) => 1,
+    water_level: (_) => 1,
   }),
   draining: assign({
-    laundry_soap: (ctx) => "",
-    water_level: (ctx) => 1,
+    laundry_soap: (_) => "",
+    water_level: (_) => 1,
   }),
   drainWaterAndLaundrySoap: assign({
-    laundry_soap: (ctx) => "",
-    water_level: (ctx) => 0,
+    laundry_soap: (_) => "",
+    water_level: (_) => 0,
   }),
   drying: assign({
-    water_level: (ctx) => 0,
+    water_level: (_) => 0,
   }),
   unloading: assign({
-    laundry: (ctx) => 0,
+    laundry: (_) => 0,
   }),
   setTime: assign({
-    timer: (ctx) => 3,
+    timer: (_) => 3,
   }),
   decrementTime: assign({
     timer: (ctx) => ctx.timer - 1,

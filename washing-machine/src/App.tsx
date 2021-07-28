@@ -11,6 +11,8 @@ const App: React.FC = () => {
 
   const { context, value } = state;
 
+  const { water_level, laundry, laundry_soap } = context;
+
   const substate: StateValue =
     typeof value === "string" ? value : value.automatic;
 
@@ -30,7 +32,7 @@ const App: React.FC = () => {
 
   const unload = () => send("UNLOAD");
 
-  console.log(value, state.context, "timer");
+  console.log(`STATE: ${state} | CONTEXT: ${context}`);
 
   return (
     <div className="App-header">
@@ -42,7 +44,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={loadWater}
-              disabled={context.water_level > 1 || !state.matches("idle")}
+              disabled={water_level > 1 || !state.matches("idle")}
             >
               LOAD WATER
             </Button>
@@ -54,9 +56,7 @@ const App: React.FC = () => {
               variant="contained"
               onClick={loadSoap}
               disabled={
-                context.water_level <= 1 ||
-                !!context.laundry_soap ||
-                !state.matches("idle")
+                water_level <= 1 || !!laundry_soap || !state.matches("idle")
               }
             >
               LOAD SOAP
@@ -68,7 +68,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={loadLaundry}
-              disabled={context.laundry !== 0 || !state.matches("idle")}
+              disabled={laundry !== 0 || !state.matches("idle")}
             >
               LOAD LAUNDRY
             </Button>
@@ -80,9 +80,7 @@ const App: React.FC = () => {
               variant="contained"
               onClick={wash}
               disabled={
-                context.water_level <= 1 ||
-                context.laundry <= 0 ||
-                !state.matches("idle")
+                water_level <= 1 || laundry <= 0 || !state.matches("idle")
               }
             >
               WASH
@@ -94,7 +92,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={drain}
-              disabled={context.water_level <= 1 || !state.matches("idle")}
+              disabled={water_level <= 1 || !state.matches("idle")}
             >
               DRAIN
             </Button>
@@ -108,7 +106,7 @@ const App: React.FC = () => {
               disabled={
                 !localStorage.getItem("drained") ||
                 !state.matches("idle") ||
-                context.water_level !== 1
+                water_level !== 1
               }
             >
               DRY
@@ -121,10 +119,10 @@ const App: React.FC = () => {
               variant="contained"
               onClick={automatic}
               disabled={
-                (context.water_level <= 0 && context.laundry <= 0) ||
-                context.water_level <= 0 ||
-                context.laundry <= 0 ||
-                context.laundry_soap === "" ||
+                (water_level <= 0 && laundry <= 0) ||
+                water_level <= 0 ||
+                laundry <= 0 ||
+                laundry_soap === "" ||
                 !state.matches("idle")
               }
             >
@@ -137,11 +135,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={unload}
-              disabled={
-                !!context.water_level ||
-                !context.laundry ||
-                !state.matches("idle")
-              }
+              disabled={!!water_level || !laundry || !state.matches("idle")}
             >
               UNLOAD
             </Button>

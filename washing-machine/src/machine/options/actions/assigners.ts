@@ -27,6 +27,10 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
     laundry_soap: (ctx, _) => "",
     water_level: (ctx, _) => 1,
   }),
+  drainWaterAndLaundrySoap: assign({
+    laundry_soap: (ctx, _) => "",
+    water_level: (ctx, _) => 0,
+  }),
   drying: assign({
     water_level: (ctx, _) => 0,
   }),

@@ -32,6 +32,14 @@ const guards: Record<
     return ctx.laundry_soap === "";
   },
   hasReachTimeout: (ctx) => ctx.timer <= 0,
+
+  hasReachTimeoutAndLaundryIsNotEmpty: (ctx) => {
+    return ctx.timer <= 0 && !!ctx.laundry;
+  },
+  
+  hasReachTimeoutAndLaundryIsEmpty: (ctx) => {
+    return ctx.timer <= 0 && !ctx.laundry;
+  },
 };
 
 export default guards;

@@ -59,56 +59,56 @@ export const config: MachineConfig<
     },
     automatic: {
       id: "automatic",
-      initial:'auto_washing',
+      initial: 'auto_washing',
       states: {
-          auto_washing: {
-            entry: ["setTimeToWash"],
-            on: {
-              TICK: [
-                {
-                  cond: "hasReachTimeout",
-                  target: "auto_draining",
-                },
-                {
-                  actions: ["decrementTime"],
-                },
-              ],
-            },
+        auto_washing: {
+          entry: ["setTimeToWash"],
+          on: {
+            TICK: [
+              {
+                cond: "hasReachTimeout",
+                target: "auto_draining",
+              },
+              {
+                actions: ["decrementTime"],
+              },
+            ],
           },
-          auto_draining: {
-            entry: ["setTimeToDrain"],
-            on: {
-              TICK: [
-                {
-                  cond: "hasReachTimeout",
-                  target: "auto_drying",
-                  actions: ["draining"]
-                },
-                {
-                  actions: ["decrementTime"],
-                },
-              ],
-            },
+        },
+        auto_draining: {
+          entry: ["setTimeToDrain"],
+          on: {
+            TICK: [
+              {
+                cond: "hasReachTimeout",
+                target: "auto_drying",
+                actions: ["draining"]
+              },
+              {
+                actions: ["decrementTime"],
+              },
+            ],
           },
-          auto_drying: {
-            entry: ["setTimeToDry"],
-            on: {
-              TICK: [
-                {
-                  cond: "hasReachTimeout",
-                  target: "#idle",
-                  actions: ["drying"]
-                },
-                {
-                  actions: ["decrementTime"],
-                },
-              ],
-            },
+        },
+        auto_drying: {
+          entry: ["setTimeToDry"],
+          on: {
+            TICK: [
+              {
+                cond: "hasReachTimeout",
+                target: "#idle",
+                actions: ["drying"]
+              },
+              {
+                actions: ["decrementTime"],
+              },
+            ],
           },
+        },
       },
     },
     washing: {
-      id:"washing",
+      id: "washing",
       on: {
         TICK: [
           {
@@ -122,22 +122,27 @@ export const config: MachineConfig<
       },
     },
     draining: {
-      id:"draining",
+      id: "draining",
       on: {
         TICK: [
           {
-            cond: "hasReachTimeout",
+            cond: "hasReachTimeoutAndLaundryIsNotEmpty",
             target: "#idle",
             actions: ["draining"]
           },
           {
-            actions: ["decrementTime"],
+            cond: "hasReachTimeoutAndLaundryIsEmpty",
+            target: "#idle",
+            actions: ["drainWaterAndLaundrySoap"]
           },
+          {
+            actions: ["decrementTime"],
+          }
         ],
       },
     },
     drying: {
-      id:"drying",
+      id: "drying",
       on: {
         TICK: [
           {

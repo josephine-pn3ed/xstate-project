@@ -9,12 +9,12 @@ interface Props {
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
-  
+  const { timer, water_level, laundry, laundry_soap } = context;
   return (
     <>
       <div className="box-canvas">
         <div className="machine">
-          <div className="drawer">{context.timer}</div>
+          <div className="drawer">{timer}</div>
           <div className="panel">{value}</div>
           <div className="door">
             <div
@@ -30,52 +30,42 @@ export const WashingMachine = (props: Props) => {
               <div className="water">
                 <div
                   className={
-                    context.water_level > 1
+                    water_level > 1
                       ? "ripple-one"
-                      : context.water_level === 1
+                      : water_level === 1
                       ? "ripple-four"
                       : ""
                   }
                 ></div>
                 <div
                   className={
-                    context.water_level > 1
+                    water_level > 1
                       ? "ripple-two"
-                      : context.water_level === 1
+                      : water_level === 1
                       ? "ripple-five"
                       : ""
                   }
                 ></div>
                 <div
                   className={
-                    context.water_level > 1
+                    water_level > 1
                       ? "ripple-three"
-                      : context.water_level === 1
+                      : water_level === 1
                       ? "ripple-six"
                       : ""
                   }
                 ></div>
               </div>
               <div>
-                <div
-                  className={context.laundry_soap ? "soap soap-one" : ""}
-                ></div>
-                <div
-                  className={context.laundry_soap ? "soap soap-two" : ""}
-                ></div>
-                <div
-                  className={context.laundry_soap ? "soap soap-three" : ""}
-                ></div>
-                <div
-                  className={context.laundry_soap ? "soap soap-four" : ""}
-                ></div>
-                <div
-                  className={context.laundry_soap ? "soap soap-five" : ""}
-                ></div>
-                <div className={context.laundry_soap ? "soap-six" : ""}></div>
+                <div className={laundry_soap ? "soap soap-one" : ""}></div>
+                <div className={laundry_soap ? "soap soap-two" : ""}></div>
+                <div className={laundry_soap ? "soap soap-three" : ""}></div>
+                <div className={laundry_soap ? "soap soap-four" : ""}></div>
+                <div className={laundry_soap ? "soap soap-five" : ""}></div>
+                <div className={laundry_soap ? "soap-six" : ""}></div>
               </div>
-              <span className={context.laundry ? "clothes" : ""}></span>
-              <span className={context.laundry ? "clothes1" : ""}></span>
+              <span className={laundry ? "clothes" : ""}></span>
+              <span className={laundry ? "clothes1" : ""}></span>
             </div>
             <div className="playground"></div>
           </div>

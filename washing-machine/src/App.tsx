@@ -1,8 +1,5 @@
 import "./App.css";
-<<<<<<< HEAD
 import React from "react";
-=======
->>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
 import { useMachine } from "@xstate/react";
 import { Grid, Container, Button } from "@material-ui/core";
 import { WashingMachine } from "./components/WashingMachine";
@@ -11,31 +8,33 @@ import { StateValue } from "xstate";
 
 const App: React.FC = () => {
   const [state, send] = useMachine(spawnMachine({}));
+
   const { context, value } = state;
-  let val: StateValue = typeof value === "string" ? value : value.automatic;
-  if (val === "draining" && typeof value === "string") {
-    localStorage.setItem("drained", "laundryHasBeenDrained");
-  }
-<<<<<<< HEAD
+
+  const substate: StateValue = typeof value === "string" ? value : value.automatic;
 
   const loadWater = () => send("LOAD_WATER");
+
   const loadSoap = () => send("LOAD_SOAP");
+
   const loadLaundry = () => send("LOAD_LAUNDRY");
+
   const wash = () => send("WASH");
+
   const drain = () => send("DRAIN");
-  const dry = () => send("DRY") && localStorage.removeItem("drained");
+
+  const dry = () => send("DRY");
+
   const automatic = () => send("AUTOMATIC");
+
   const unload = () => send("UNLOAD");
 
   console.log(value, state.context, "timer");
-=======
-  console.log(state.context, state, "status");
->>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
 
   return (
     <div className="App-header">
       <Container maxWidth="sm">
-        <WashingMachine value={val} context={state.context} />
+        <WashingMachine value={substate} context={state.context} />
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <Button
@@ -47,26 +46,22 @@ const App: React.FC = () => {
               LOAD WATER
             </Button>
           </Grid>
+
           <Grid item xs={4}>
             <Button
               fullWidth
               variant="contained"
-<<<<<<< HEAD
               onClick={loadSoap}
-              disabled={context.laundry_soap !== "" || !state.matches("idle")}
-=======
-              onClick={() => send("LOAD_SOAP")}
               disabled={
-                context.water_level === 0 ||
-                !state.matches("idle") ||
-                context.laundry_soap !== ""
+                context.water_level <= 1 ||
+                !!context.laundry_soap ||
+                !state.matches("idle")
               }
-              // disabled={context.laundry_soap === "" || !state.matches("idle")}
->>>>>>> 8be3b65649689e88a289cdb65533d419dccb0fe0
             >
               LOAD SOAP
             </Button>
           </Grid>
+
           <Grid item xs={4}>
             <Button
               fullWidth
@@ -77,13 +72,13 @@ const App: React.FC = () => {
               LOAD LAUNDRY
             </Button>
           </Grid>
+
           <Grid item xs={3}>
             <Button
               fullWidth
               variant="contained"
               onClick={wash}
               disabled={
-                (context.water_level <= 1 && context.laundry <= 0) ||
                 context.water_level <= 1 ||
                 context.laundry <= 0 ||
                 !state.matches("idle")
@@ -92,19 +87,21 @@ const App: React.FC = () => {
               WASH
             </Button>
           </Grid>
+
           <Grid item xs={3}>
             <Button
               fullWidth
               variant="contained"
               onClick={drain}
               disabled={
-                (context.water_level <= 1 && context.laundry_soap === "") ||
+                (context.water_level <= 1) ||
                 !state.matches("idle")
               }
             >
               DRAIN
             </Button>
           </Grid>
+
           <Grid item xs={3}>
             <Button
               fullWidth
@@ -119,15 +116,14 @@ const App: React.FC = () => {
               DRY
             </Button>
           </Grid>
+
           <Grid item xs={3}>
             <Button
               fullWidth
               variant="contained"
               onClick={automatic}
               disabled={
-                (context.water_level <= 0 &&
-                  context.laundry <= 0 &&
-                  context.laundry_soap !== "") ||
+                (context.water_level <= 0 && context.laundry <= 0) ||
                 context.water_level <= 0 ||
                 context.laundry <= 0 ||
                 context.laundry_soap === "" ||
@@ -137,15 +133,15 @@ const App: React.FC = () => {
               AUTOMATIC
             </Button>
           </Grid>
+
           <Grid item xs={3}>
             <Button
               fullWidth
               variant="contained"
               onClick={unload}
               disabled={
-                (!context.water_level &&
-                  !context.laundry &&
-                  !context.laundry_soap) ||
+                !!context.water_level ||
+                !context.laundry ||
                 !state.matches("idle")
               }
             >

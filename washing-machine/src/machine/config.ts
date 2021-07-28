@@ -42,7 +42,7 @@ export const config: MachineConfig<
         },
         DRAIN: {
           cond: "isWaterNotEmpty",
-          actions: ["emptyWaterLvl", "setTimeToDrain"],
+          actions: ["setTimeToDrain"],
           target: "draining",
         },
         DRY: {
@@ -82,9 +82,10 @@ export const config: MachineConfig<
                 {
                   cond: "hasReachTimeout",
                   target: "auto_drying",
+                  actions: ["draining"]
                 },
                 {
-                  actions: ["draining","decrementTime"],
+                  actions: ["decrementTime"],
                 },
               ],
             },
@@ -96,9 +97,10 @@ export const config: MachineConfig<
                 {
                   cond: "hasReachTimeout",
                   target: "#idle",
+                  actions: ["drying"]
                 },
                 {
-                  actions: ["drying","decrementTime"],
+                  actions: ["decrementTime"],
                 },
               ],
             },
@@ -106,6 +108,7 @@ export const config: MachineConfig<
       },
     },
     washing: {
+      id:"washing",
       on: {
         TICK: [
           {
@@ -125,9 +128,10 @@ export const config: MachineConfig<
           {
             cond: "hasReachTimeout",
             target: "#idle",
+            actions: ["draining"]
           },
           {
-            actions: ["draining","decrementTime"],
+            actions: ["decrementTime"],
           },
         ],
       },
@@ -139,9 +143,10 @@ export const config: MachineConfig<
           {
             cond: "hasReachTimeout",
             target: "#idle",
+            actions: ["drying"]
           },
           {
-            actions: ["drying","decrementTime"],
+            actions: ["decrementTime"],
           },
         ],
       },

@@ -279,6 +279,7 @@
   top: 20%;
   transform: scale(0.4);
 }
+
 .soap-two {
   transform-origin: 132% 94%;
   animation: soap 6s ease-in-out infinite alternate;
@@ -288,6 +289,7 @@
   top: 50%;
   transform: scale(0.4);
 }
+
 .soap-three {
   width: 50%;
   height: 50%;
@@ -299,6 +301,7 @@
   top: 30%;
   transform: scale(0.4);
 }
+
 .soap-four {
   transform-origin: 132% 94%;
   animation: soap 7s ease-in-out infinite alternate;
@@ -308,6 +311,7 @@
   top: 50%;
   transform: scale(0.4);
 }
+
 .soap-five {
   transform-origin: 132% 94%;
   animation: soap 7s ease-in-out infinite alternate;
@@ -317,6 +321,7 @@
   top: 10%;
   transform: scale(0.4);
 }
+
 .soap-six {
   transform-origin: 132% 94%;
   animation: soap 10s ease-in-out infinite alternate;
@@ -326,6 +331,7 @@
   top: 10%;
   transform: scale(0.4);
 }
+
 .soap {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;

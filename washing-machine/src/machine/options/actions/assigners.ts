@@ -17,7 +17,6 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   setTimeToDry: assign({
     timer: (ctx, _) => 5,
   }),
-
   setTimeToDrain: assign({
     timer: (ctx, _) => 5,
   }),
@@ -25,8 +24,8 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
     water_level: (ctx, _) => 1,
   }),
   draining: assign({
-    water_level: (ctx, _) => 1,
     laundry_soap: (ctx, _) => "",
+    water_level: (ctx, _) => 1,
   }),
   drying: assign({
     water_level: (ctx, _) => 0,

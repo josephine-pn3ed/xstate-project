@@ -9,7 +9,7 @@ interface Props {
 
 export const WashingMachine = (props: Props) => {
   const { value, context } = props;
-
+  
   return (
     <>
       <div className="box-canvas">
@@ -21,9 +21,7 @@ export const WashingMachine = (props: Props) => {
               className={`drum ${
                 value === "washing" ||
                 value === "drying" ||
-                value === "draining" ||
                 value === "auto_washing" ||
-                value === "auto_draining" ||
                 value === "auto_drying"
                   ? "isWashing"
                   : ""

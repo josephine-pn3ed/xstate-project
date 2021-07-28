@@ -6,7 +6,7 @@ const guards: Record<
   ConditionPredicate<IWashingContext, IWashingEvent>
 > = {
   isWaterEmpty: (ctx, _) => {
-    return ctx.water_level === 0;
+    return ctx.water_level <= 1;
   },
   isWaterNotEmpty: (ctx, _) => {
     return ctx.water_level > 1;

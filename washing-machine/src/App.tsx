@@ -11,7 +11,8 @@ const App: React.FC = () => {
 
   const { context, value } = state;
 
-  const substate: StateValue = typeof value === "string" ? value : value.automatic;
+  const substate: StateValue =
+    typeof value === "string" ? value : value.automatic;
 
   const loadWater = () => send("LOAD_WATER");
 
@@ -93,10 +94,7 @@ const App: React.FC = () => {
               fullWidth
               variant="contained"
               onClick={drain}
-              disabled={
-                (context.water_level <= 1) ||
-                !state.matches("idle")
-              }
+              disabled={context.water_level <= 1 || !state.matches("idle")}
             >
               DRAIN
             </Button>

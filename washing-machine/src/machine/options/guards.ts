@@ -36,10 +36,15 @@ const guards: Record<
   hasReachTimeoutAndLaundryIsNotEmpty: (ctx) => {
     return ctx.timer <= 0 && !!ctx.laundry;
   },
-  
   hasReachTimeoutAndLaundryIsEmpty: (ctx) => {
     return ctx.timer <= 0 && !ctx.laundry;
   },
+  hasReachTimeoutAndAutomaticCounterNotZero: (ctx) => {
+    return ctx.timer <= 0 && ctx.automatic_counter > 1; 
+  },
+  hasReachTimeoutAndAutomaticCounterZero: (ctx) => {
+    return ctx.timer <= 0 && ctx.automatic_counter <= 1; 
+  }
 };
 
 export default guards;

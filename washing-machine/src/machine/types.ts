@@ -2,7 +2,6 @@ import {
   StateNodeDefinition,
   AnyEventObject,
   AnyStateNodeDefinition,
-  StateNodeConfig
 } from "xstate";
 
 export interface IWashingContext {
@@ -10,6 +9,7 @@ export interface IWashingContext {
   laundry: number;
   laundry_soap: string;
   timer: number;
+  automatic_counter: number;
 }
 
 export type IWashingEvent =
@@ -64,6 +64,7 @@ export interface IAutomaticSchema extends AnyStateNodeDefinition {
     auto_washing: StateNodeDefinition<IWashingContext, any, any>;
     auto_draining: StateNodeDefinition<IWashingContext, any, any>;
     auto_drying: StateNodeDefinition<IWashingContext, any, any>;
+    auto_load_water: StateNodeDefinition<IWashingContext, any, any>;
   };
 }
 

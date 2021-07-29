@@ -1,50 +1,62 @@
 const options = {
   actions: {
     loadWater: assign({
-      water_level: (ctx, _) => 8,
+      water_level: (_) => 8,
     }),
     loadSoap: assign({
-      laundry_soap: (ctx, _) => "Calla",
+      laundry_soap: (_) => "Calla",
     }),
     loadLaundry: assign({
-      laundry: (ctx, _) => 10,
+      laundry: (_) => 10,
     }),
     setTimeToWash: assign({
-      timer: (ctx, _) => 10,
+      timer: (_) => 10,
     }),
     setTimeToDry: assign({
-      timer: (ctx, _) => 5,
+      timer: (_) => 5,
     }),
-
     setTimeToDrain: assign({
-      timer: (ctx, _) => 5,
+      timer: (_) => 5,
+    }),
+    setTimeToLoadWater: assign({
+      timer: (_) => 3,
     }),
     emptyWaterLvl: assign({
-      water_level: (ctx, _) => 1,
+      water_level: (_) => 1,
     }),
     draining: assign({
-      water_level: (ctx, _) => 1,
-      laundry_soap: (ctx, _) => "",
+      laundry_soap: (_) => "",
+      water_level: (_) => 1,
+    }),
+    drainWaterAndLaundrySoap: assign({
+      laundry_soap: (_) => "",
+      water_level: (_) => 0,
     }),
     drying: assign({
-      water_level: (ctx, _) => 0,
+      water_level: (_) => 0,
     }),
     unloading: assign({
-      laundry: (ctx, _) => 0,
+      laundry: (_) => 0,
     }),
     setTime: assign({
-      timer: (ctx) => 3,
+      timer: (_) => 3,
     }),
     decrementTime: assign({
       timer: (ctx) => ctx.timer - 1,
     }),
+    decrementAutomaticCounter: assign({
+      automatic_counter: (ctx) => ctx.automatic_counter - 1,
+    }),
   },
   guards: {
     isWaterEmpty: (ctx, _) => {
-      return ctx.water_level === 0;
+      return ctx.water_level <= 1;
     },
     isWaterNotEmpty: (ctx, _) => {
       return ctx.water_level > 1;
+    },
+    isThereWaterAndLaundryAndSoap: (ctx, _) => {
+      return ctx.water_level > 0 && ctx.laundry > 0 && ctx.laundry_soap !== "";
     },
     isThereWaterAndLaundry: (ctx, _) => {
       return ctx.water_level > 0 && ctx.laundry > 0;
@@ -64,6 +76,19 @@ const options = {
       return ctx.laundry_soap === "";
     },
     hasReachTimeout: (ctx) => ctx.timer <= 0,
+
+    hasReachTimeoutAndLaundryIsNotEmpty: (ctx) => {
+      return ctx.timer <= 0 && !!ctx.laundry;
+    },
+    hasReachTimeoutAndLaundryIsEmpty: (ctx) => {
+      return ctx.timer <= 0 && !ctx.laundry;
+    },
+    hasReachTimeoutAndAutomaticCounterNotZero: (ctx) => {
+      return ctx.timer <= 0 && ctx.automatic_counter > 1;
+    },
+    hasReachTimeoutAndAutomaticCounterZero: (ctx) => {
+      return ctx.timer <= 0 && ctx.automatic_counter <= 1;
+    },
   },
   services: {
     ticker: (ctx) => (send) => {
@@ -89,7 +114,8 @@ const fetchMachine = Machine(
       water_level: 0,
       laundry: 0,
       laundry_soap: "",
-      timer: 5000,
+      timer: 0,
+      automatic_counter: 3,
     },
     invoke: {
       id: "ticker",
@@ -111,11 +137,11 @@ const fetchMachine = Machine(
           },
           LOAD_SOAP: {
             cond: "isSoapEmpty",
-            target: "idle",
             actions: ["loadSoap"],
+            target: "idle",
           },
           AUTOMATIC: {
-            cond: "isThereWaterAndLaundry",
+            cond: "isThereWaterAndLaundryAndSoap",
             target: "automatic",
           },
           WASH: {
@@ -125,7 +151,7 @@ const fetchMachine = Machine(
           },
           DRAIN: {
             cond: "isWaterNotEmpty",
-            actions: ["emptyWaterLvl", "setTimeToDrain"],
+            actions: ["setTimeToDrain"],
             target: "draining",
           },
           DRY: {
@@ -136,7 +162,7 @@ const fetchMachine = Machine(
           UNLOAD: {
             cond: "isLaundryLeft",
             actions: ["unloading"],
-            target: "#idle",
+            target: "idle",
           },
         },
       },
@@ -165,9 +191,10 @@ const fetchMachine = Machine(
                 {
                   cond: "hasReachTimeout",
                   target: "auto_drying",
+                  actions: ["draining"],
                 },
                 {
-                  actions: ["draining", "decrementTime"],
+                  actions: ["decrementTime"],
                 },
               ],
             },
@@ -177,11 +204,32 @@ const fetchMachine = Machine(
             on: {
               TICK: [
                 {
-                  cond: "hasReachTimeout",
-                  target: "#idle",
+                  cond: "hasReachTimeoutAndAutomaticCounterNotZero",
+                  target: "auto_load_water",
+                  actions: ["drying", "decrementAutomaticCounter", "loadWater"],
                 },
                 {
-                  actions: ["drying", "decrementTime"],
+                  cond: "hasReachTimeoutAndAutomaticCounterZero",
+                  target: "#idle",
+                  actions: ["drying"],
+                },
+                {
+                  actions: ["decrementTime"],
+                },
+              ],
+            },
+          },
+          auto_load_water: {
+            entry: ["setTimeToLoadWater"],
+            on: {
+              TICK: [
+                {
+                  cond: "hasReachTimeout",
+                  target: "auto_washing",
+                  actions: ["loadWater"],
+                },
+                {
+                  actions: ["decrementTime"],
                 },
               ],
             },
@@ -189,6 +237,7 @@ const fetchMachine = Machine(
         },
       },
       washing: {
+        id: "washing",
         on: {
           TICK: [
             {
@@ -206,11 +255,17 @@ const fetchMachine = Machine(
         on: {
           TICK: [
             {
-              cond: "hasReachTimeout",
+              cond: "hasReachTimeoutAndLaundryIsNotEmpty",
               target: "#idle",
+              actions: ["draining"],
             },
             {
-              actions: ["draining", "decrementTime"],
+              cond: "hasReachTimeoutAndLaundryIsEmpty",
+              target: "#idle",
+              actions: ["drainWaterAndLaundrySoap"],
+            },
+            {
+              actions: ["decrementTime"],
             },
           ],
         },
@@ -222,9 +277,10 @@ const fetchMachine = Machine(
             {
               cond: "hasReachTimeout",
               target: "#idle",
+              actions: ["drying"],
             },
             {
-              actions: ["drying", "decrementTime"],
+              actions: ["decrementTime"],
             },
           ],
         },

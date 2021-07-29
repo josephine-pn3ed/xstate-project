@@ -205,7 +205,7 @@ const fetchMachine = Machine(
               TICK: [
                 {
                   cond: "hasReachTimeoutAndAutomaticCounterNotZero",
-                  actions: ["drying", "decrementAutomaticCounter", "loadWater"],
+                  actions: ["drying", "decrementAutomaticCounter"],
                   target: "auto_load_water",
                 },
                 {
@@ -256,13 +256,13 @@ const fetchMachine = Machine(
           TICK: [
             {
               cond: "hasReachTimeoutAndLaundryIsNotEmpty",
-              target: "#idle",
               actions: ["draining"],
+              target: "#idle",
             },
             {
               cond: "hasReachTimeoutAndLaundryIsEmpty",
-              target: "#idle",
               actions: ["drainWaterAndLaundrySoap"],
+              target: "#idle",
             },
             {
               actions: ["decrementTime"],
@@ -276,8 +276,8 @@ const fetchMachine = Machine(
           TICK: [
             {
               cond: "hasReachTimeout",
-              target: "#idle",
               actions: ["drying"],
+              target: "#idle",
             },
             {
               actions: ["decrementTime"],

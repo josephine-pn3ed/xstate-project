@@ -2,7 +2,7 @@ import { ServiceConfig } from 'xstate'
 import { IWashingContext, IWashingEvent } from '../../types'
 
 const services: Record<any, ServiceConfig<IWashingContext, IWashingEvent>> = {
-  ticker: (ctx: IWashingContext, evt: IWashingEvent) => send => {
+  ticker: () => send => {
     const sendTick = () => {
       send({
         type: 'TICK'

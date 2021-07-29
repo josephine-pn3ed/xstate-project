@@ -5,17 +5,17 @@ const guards: Record<
   any,
   ConditionPredicate<IWashingContext, IWashingEvent>
 > = {
-  isWaterEmpty: (ctx, _) => ctx.water_level <= 1,
-  isWaterNotEmpty: (ctx, _) => ctx.water_level > 1,
-  isThereWaterAndLaundryAndSoap: (ctx, _) =>
+  isWaterEmpty: (ctx) => ctx.water_level <= 1,
+  isWaterNotEmpty: (ctx) => ctx.water_level > 1,
+  isThereWaterAndLaundryAndSoap: (ctx) =>
     ctx.water_level > 0 && ctx.laundry > 0 && ctx.laundry_soap !== '',
-  isThereWaterAndLaundry: (ctx, _) => ctx.water_level > 0 && ctx.laundry > 0,
-  isWaterEmptyAndLaundryNotEmpty: (ctx, _) =>
+  isThereWaterAndLaundry: (ctx) => ctx.water_level > 0 && ctx.laundry > 0,
+  isWaterEmptyAndLaundryNotEmpty: (ctx) =>
     ctx.water_level === 1 && ctx.laundry !== 0,
-  isLaundryLeft: (ctx, _) =>
+  isLaundryLeft: (ctx) =>
     ctx.water_level === 0 && ctx.laundry_soap === '' && ctx.laundry !== 0,
-  isLaundryEmpty: (ctx, _) => ctx.laundry === 0,
-  isSoapEmpty: (ctx, _) => ctx.laundry_soap === '',
+  isLaundryEmpty: (ctx) => ctx.laundry === 0,
+  isSoapEmpty: (ctx) => ctx.laundry_soap === '',
   hasReachTimeout: ctx => ctx.timer <= 0,
   hasReachTimeoutAndLaundryIsNotEmpty: ctx => ctx.timer <= 0 && !!ctx.laundry,
   hasReachTimeoutAndLaundryIsEmpty: ctx => ctx.timer <= 0 && !ctx.laundry,

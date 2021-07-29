@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import { StateValue } from 'xstate'
 import { IWashingContext } from '../machine/types'
 import '../styles/index.css'

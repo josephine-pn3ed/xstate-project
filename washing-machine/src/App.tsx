@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   const unload = () => send("UNLOAD");
 
-  console.log(`STATE: ${state} | CONTEXT: ${context}`);
+  console.log("STATE: ", value, " | CONTEXT: ", context);
 
   return (
     <div className="App-header">

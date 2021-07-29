@@ -81,8 +81,8 @@ export const config: MachineConfig<
             TICK: [
               {
                 cond: "hasReachTimeout",
+                actions: ["draining"],
                 target: "auto_drying",
-                actions: ["draining"]
               },
               {
                 actions: ["decrementTime"],
@@ -96,13 +96,13 @@ export const config: MachineConfig<
             TICK: [
               {
                 cond: "hasReachTimeoutAndAutomaticCounterNotZero",
+                actions: ["drying", "decrementAutomaticCounter", "loadWater"],
                 target: "auto_load_water",
-                actions: ["drying", "decrementAutomaticCounter", "loadWater"]
               },
               {
                 cond: "hasReachTimeoutAndAutomaticCounterZero",
+                actions: ["drying"],
                 target: "#idle",
-                actions: ["drying"]
               },
               {
                 actions: ["decrementTime"],
@@ -116,8 +116,8 @@ export const config: MachineConfig<
             TICK:[
               {
                 cond: "hasReachTimeout",
+                actions: ["loadWater"],
                 target: "auto_washing",
-                actions: ["loadWater"]
               },
               {
                 actions: ["decrementTime"],

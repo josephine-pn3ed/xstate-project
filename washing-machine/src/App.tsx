@@ -13,7 +13,7 @@ const App: React.FC = () => {
 
   const { water_level, laundry, laundry_soap } = context;
 
-  const substate: StateValue =
+  const stateOrSubState: StateValue =
     typeof value === "string" ? value : value.automatic;
 
   const loadWater = () => send("LOAD_WATER");
@@ -32,12 +32,12 @@ const App: React.FC = () => {
 
   const unload = () => send("UNLOAD");
 
-  console.log("STATE: ", value, " | CONTEXT: ", context);
+  console.log("STATE: ", stateOrSubState, " | CONTEXT: ", context);
 
   return (
     <div className="App-header">
       <Container maxWidth="sm">
-        <WashingMachine value={substate} context={state.context} />
+        <WashingMachine value={stateOrSubState} context={state.context} />
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <Button

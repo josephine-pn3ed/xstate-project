@@ -1,19 +1,19 @@
-import { ServiceConfig } from "xstate";
-import { IWashingContext, IWashingEvent } from "../../types";
+import { ServiceConfig } from 'xstate'
+import { IWashingContext, IWashingEvent } from '../../types'
 
 const services: Record<any, ServiceConfig<IWashingContext, IWashingEvent>> = {
-  ticker: (ctx: IWashingContext, evt: IWashingEvent) => (send) => {
+  ticker: (ctx: IWashingContext, evt: IWashingEvent) => send => {
     const sendTick = () => {
       send({
-        type: "TICK",
-      });
-    };
-    const ticker = setInterval(sendTick, 1000);
+        type: 'TICK'
+      })
+    }
+    const ticker = setInterval(sendTick, 1000)
     const stopTicker = () => {
-      clearInterval(ticker);
-    };
-    return stopTicker;
-  },
-};
+      clearInterval(ticker)
+    }
+    return stopTicker
+  }
+}
 
-export default services;
+export default services

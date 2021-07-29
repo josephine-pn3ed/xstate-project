@@ -1,9 +1,9 @@
-import { IWashingContext, IWashingEvent } from "../../types";
-import { ActionFunctionMap } from "xstate";
-import assigners from "./assigners";
+import { IWashingContext, IWashingEvent } from '../../types'
+import { ActionFunctionMap } from 'xstate'
+import assigners from './assigners'
 
 const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
-  ...assigners,
-};
+  ...assigners
+}
 
-export default actions;
+export default actions

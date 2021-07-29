@@ -1,182 +1,182 @@
-import { MachineConfig } from "xstate";
-import { IWashingEvent, IWashingContext, IMachineSchema } from "./types";
+import { MachineConfig } from 'xstate'
+import { IWashingEvent, IWashingContext, IMachineSchema } from './types'
 
 export const config: MachineConfig<
   IWashingContext,
   IMachineSchema,
   IWashingEvent
 > = {
-  id: "washing_machine_dryer",
-  initial: "idle",
+  id: 'washing_machine_dryer',
+  initial: 'idle',
   invoke: {
-    id: "ticker",
-    src: "ticker",
+    id: 'ticker',
+    src: 'ticker'
   },
   states: {
     idle: {
-      id: "idle",
+      id: 'idle',
       on: {
         LOAD_WATER: {
-          cond: "isWaterEmpty",
-          actions: ["loadWater"],
-          target: "idle",
+          cond: 'isWaterEmpty',
+          actions: ['loadWater'],
+          target: 'idle'
         },
         LOAD_LAUNDRY: {
-          cond: "isLaundryEmpty",
-          actions: ["loadLaundry"],
-          target: "idle",
+          cond: 'isLaundryEmpty',
+          actions: ['loadLaundry'],
+          target: 'idle'
         },
         LOAD_SOAP: {
-          cond: "isSoapEmpty",
-          actions: ["loadSoap"],
-          target: "idle",
+          cond: 'isSoapEmpty',
+          actions: ['loadSoap'],
+          target: 'idle'
         },
         AUTOMATIC: {
-          cond: "isThereWaterAndLaundryAndSoap",
-          target: "automatic",
+          cond: 'isThereWaterAndLaundryAndSoap',
+          target: 'automatic'
         },
         WASH: {
-          cond: "isThereWaterAndLaundry",
-          actions: ["setTimeToWash"],
-          target: "washing",
+          cond: 'isThereWaterAndLaundry',
+          actions: ['setTimeToWash'],
+          target: 'washing'
         },
         DRAIN: {
-          cond: "isWaterNotEmpty",
-          actions: ["setTimeToDrain"],
-          target: "draining",
+          cond: 'isWaterNotEmpty',
+          actions: ['setTimeToDrain'],
+          target: 'draining'
         },
         DRY: {
-          cond: "isWaterEmptyAndLaundryNotEmpty",
-          actions: ["setTimeToDry"],
-          target: "drying",
+          cond: 'isWaterEmptyAndLaundryNotEmpty',
+          actions: ['setTimeToDry'],
+          target: 'drying'
         },
         UNLOAD: {
-          cond: "isLaundryLeft",
-          actions: ["unloading"],
-          target: "idle",
-        },
-      },
+          cond: 'isLaundryLeft',
+          actions: ['unloading'],
+          target: 'idle'
+        }
+      }
     },
     automatic: {
-      id: "automatic",
+      id: 'automatic',
       initial: 'auto_washing',
       states: {
         auto_washing: {
-          entry: ["setTimeToWash"],
+          entry: ['setTimeToWash'],
           on: {
             TICK: [
               {
-                cond: "hasReachTimeout",
-                target: "auto_draining",
+                cond: 'hasReachTimeout',
+                target: 'auto_draining'
               },
               {
-                actions: ["decrementTime"],
-              },
-            ],
-          },
+                actions: ['decrementTime']
+              }
+            ]
+          }
         },
         auto_draining: {
-          entry: ["setTimeToDrain"],
+          entry: ['setTimeToDrain'],
           on: {
             TICK: [
               {
-                cond: "hasReachTimeout",
-                actions: ["draining"],
-                target: "auto_drying",
+                cond: 'hasReachTimeout',
+                actions: ['draining'],
+                target: 'auto_drying'
               },
               {
-                actions: ["decrementTime"],
-              },
-            ],
-          },
+                actions: ['decrementTime']
+              }
+            ]
+          }
         },
         auto_drying: {
-          entry: ["setTimeToDry"],
+          entry: ['setTimeToDry'],
           on: {
             TICK: [
               {
-                cond: "hasReachTimeoutAndAutomaticCounterNotZero",
-                actions: ["drying", "decrementAutomaticCounter"],
-                target: "auto_load_water",
+                cond: 'hasReachTimeoutAndAutomaticCounterNotZero',
+                actions: ['drying', 'decrementAutomaticCounter'],
+                target: 'auto_load_water'
               },
               {
-                cond: "hasReachTimeoutAndAutomaticCounterZero",
-                actions: ["drying"],
-                target: "#idle",
+                cond: 'hasReachTimeoutAndAutomaticCounterZero',
+                actions: ['drying'],
+                target: '#idle'
               },
               {
-                actions: ["decrementTime"],
-              },
-            ],
-          },
+                actions: ['decrementTime']
+              }
+            ]
+          }
         },
         auto_load_water: {
-          entry: ["setTimeToLoadWater"],
+          entry: ['setTimeToLoadWater'],
           on: {
-            TICK:[
+            TICK: [
               {
-                cond: "hasReachTimeout",
-                actions: ["loadWater"],
-                target: "auto_washing",
+                cond: 'hasReachTimeout',
+                actions: ['loadWater'],
+                target: 'auto_washing'
               },
               {
-                actions: ["decrementTime"],
+                actions: ['decrementTime']
               }
             ]
           }
         }
-      },
+      }
     },
     washing: {
-      id: "washing",
+      id: 'washing',
       on: {
         TICK: [
           {
-            cond: "hasReachTimeout",
-            target: "#idle",
+            cond: 'hasReachTimeout',
+            target: '#idle'
           },
           {
-            actions: ["decrementTime"],
-          },
-        ],
-      },
+            actions: ['decrementTime']
+          }
+        ]
+      }
     },
     draining: {
-      id: "draining",
+      id: 'draining',
       on: {
         TICK: [
           {
-            cond: "hasReachTimeoutAndLaundryIsNotEmpty",
-            actions: ["draining"],
-            target: "#idle",
+            cond: 'hasReachTimeoutAndLaundryIsNotEmpty',
+            actions: ['draining'],
+            target: '#idle'
           },
           {
-            cond: "hasReachTimeoutAndLaundryIsEmpty",
-            actions: ["drainWaterAndLaundrySoap"],
-            target: "#idle",
+            cond: 'hasReachTimeoutAndLaundryIsEmpty',
+            actions: ['drainWaterAndLaundrySoap'],
+            target: '#idle'
           },
           {
-            actions: ["decrementTime"],
+            actions: ['decrementTime']
           }
-        ],
-      },
+        ]
+      }
     },
     drying: {
-      id: "drying",
+      id: 'drying',
       on: {
         TICK: [
           {
-            cond: "hasReachTimeout",
-            actions: ["drying"],
-            target: "#idle",
+            cond: 'hasReachTimeout',
+            actions: ['drying'],
+            target: '#idle'
           },
           {
-            actions: ["decrementTime"],
-          },
-        ],
-      },
-    },
-  },
-};
+            actions: ['decrementTime']
+          }
+        ]
+      }
+    }
+  }
+}
 
-export default config;
+export default config

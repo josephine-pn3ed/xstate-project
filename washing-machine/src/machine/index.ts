@@ -11,6 +11,7 @@ const default_context: IWashingContext = {
   automatic_counter: 3
 }
 
+// eslint-disable-next-line
 export const spawnMachine = (context: Partial<IWashingContext>) => {
   const machine_config = {
     ...config,

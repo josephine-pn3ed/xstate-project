@@ -12,7 +12,7 @@ const App: React.FC = () => {
 
   const { context, value } = state
 
-  const { water_level, laundry, laundry_soap } = context
+  const { water_level, laundry, laundry_soap, automatic_counter } = context
 
   const stateOrSubState: StateValue =
     typeof value === 'string' ? value : value.automatic
@@ -45,7 +45,7 @@ const App: React.FC = () => {
               fullWidth
               variant='contained'
               onClick={loadWater}
-              disabled={water_level > 1 || !state.matches('idle')}>
+              disabled={water_level > 1 || automatic_counter <= 0 || !state.matches('idle')}>
               LOAD WATER
             </Button>
           </Grid>

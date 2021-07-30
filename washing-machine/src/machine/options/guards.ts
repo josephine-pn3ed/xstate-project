@@ -6,7 +6,7 @@ const guards: Record<
   string | number | symbol,
   ConditionPredicate<IWashingContext, IWashingEvent>
 > = {
-  isWaterEmpty: ctx => ctx.water_level <= 1,
+  isWaterEmpty: ctx => ctx.water_level <= 1 && ctx.automatic_counter > 0,
   isWaterNotEmpty: ctx => ctx.water_level > 1,
   isThereWaterAndLaundryAndSoap: ctx =>
     ctx.water_level > 0 && ctx.laundry > 0 && ctx.laundry_soap !== '',
@@ -22,9 +22,9 @@ const guards: Record<
   hasReachTimeoutAndLaundryIsNotEmpty: ctx => ctx.timer <= 0 && !!ctx.laundry,
   hasReachTimeoutAndLaundryIsEmpty: ctx => ctx.timer <= 0 && !ctx.laundry,
   hasReachTimeoutAndAutomaticCounterNotZero: ctx =>
-    ctx.timer <= 0 && ctx.automatic_counter > 1,
+    ctx.timer <= 0 && ctx.automatic_counter > 0,
   hasReachTimeoutAndAutomaticCounterZero: ctx =>
-    ctx.timer <= 0 && ctx.automatic_counter <= 1
+    ctx.timer <= 0 && ctx.automatic_counter <= 0
 }
 
 export default guards

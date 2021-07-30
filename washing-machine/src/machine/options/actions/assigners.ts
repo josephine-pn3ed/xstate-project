@@ -52,7 +52,9 @@ const actions: ActionFunctionMap<IWashingContext, IWashingEvent> = {
   }),
   unloading: assign({
     // eslint-disable-next-line
-    laundry: _ => 0
+    laundry: _ => 0,
+    // eslint-disable-next-line
+    automatic_counter: _ => 3
   }),
   setTime: assign({
     // eslint-disable-next-line

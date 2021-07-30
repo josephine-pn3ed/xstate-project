@@ -67,6 +67,7 @@ export const config: MachineConfig<
             TICK: [
               {
                 cond: 'hasReachTimeout',
+                actions: ['setTimeToDrain'],
                 target: 'auto_draining'
               },
               {
@@ -76,15 +77,15 @@ export const config: MachineConfig<
           }
         },
         auto_draining: {
-          entry: ['setTimeToDrain'],
           on: {
             TICK: [
               {
                 cond: 'isTimerEqualOne',
-                actions: ['draining'],
+                actions: ['draining', 'decrementTime'],
               },
               {
                 cond: 'hasReachTimeout',
+                actions: ['setTimeToDry'],
                 target: 'auto_drying'
               },
               {
@@ -94,16 +95,16 @@ export const config: MachineConfig<
           }
         },
         auto_drying: {
-          entry: ['setTimeToDry'],
+          entry: ['decrementAutomaticCounter'],
           on: {
             TICK: [
               {
                 cond: 'isTimerEqualOne',
-                actions: ['drying'],
+                actions: ['drying', 'decrementTime'],
               },
               {
                 cond: 'hasReachTimeoutAndAutomaticCounterNotZero',
-                actions: ['decrementAutomaticCounter'],
+                actions: ['setTimeToLoadWater'],
                 target: 'auto_load_water'
               },
               {
@@ -114,15 +115,14 @@ export const config: MachineConfig<
                 actions: ['decrementTime']
               }
             ]
-          }
+          },
         },
         auto_load_water: {
-          entry: ['setTimeToLoadWater'],
           on: {
             TICK: [
               {
                 cond: 'isTimerEqualOne',
-                actions: ['loadWater'],
+                actions: ['loadWater', 'decrementTime'],
               },
               {
                 cond: 'hasReachTimeout',

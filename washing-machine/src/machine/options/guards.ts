@@ -16,6 +16,7 @@ const guards: Record<
     ctx.water_level === 0 && ctx.laundry_soap === '' && ctx.laundry !== 0,
   isLaundryEmpty: (ctx) => ctx.laundry === 0,
   isSoapEmpty: (ctx) => ctx.laundry_soap === '',
+  isTimerOne: ctx => ctx.timer === 1,
   hasReachTimeout: ctx => ctx.timer <= 0,
   hasReachTimeoutAndLaundryIsNotEmpty: ctx => ctx.timer <= 0 && !!ctx.laundry,
   hasReachTimeoutAndLaundryIsEmpty: ctx => ctx.timer <= 0 && !ctx.laundry,
